@@ -30,7 +30,7 @@ class Message
     'Account could not be created'
   end
 
-  def self.expired_token
-    'Sorry, your token has expired. Please login to continue.'
-  end
+  def self.missing_headers
+    'Missing authorization header'
+  end  
 end

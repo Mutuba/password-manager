@@ -4,16 +4,14 @@
 class AuthenticateUserService < ApplicationService
   Result = Struct.new(:auth_token, :success?, :failure?)
 
-  def initialize(**args)
-    super()
-    @username = args[:username]
-    @password = args[:password]
-    @user = nil
+  def initialize(username:, password:)
+    @username = username
+    @password = password
   end
 
   def call
-    if authentication_successful?
-      auth_token = Authentication::JsonWebToken.encode(user_id: user.id)
+    if authenticate_user
+      auth_token = Authentication::JsonWebToken.encode(user_id: @user.id)
       Result.new(auth_token, true, false)
     else
       Result.new(nil, false, true)
@@ -22,10 +20,10 @@ class AuthenticateUserService < ApplicationService
 
   private
 
-  attr_reader :username, :password, :user
+  attr_reader :username, :password
 
-  def authentication_successful?
-    @user = User.find_by!(username:)
-    user&.authenticate(password)
+  def authenticate_user
+    @user = User.find_by(username:)
+    @user&.authenticate(password)
   end
 end

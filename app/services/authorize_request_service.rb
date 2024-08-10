@@ -2,38 +2,49 @@
 
 # app/services/authorize_request_service.rb
 class AuthorizeRequestService < ApplicationService
+  Result = Struct.new(:user, :success?, :failure?, :failure_message)
+
   def initialize(**headers)
     super()
     @headers = headers
   end
 
   def call
-    { user: }
+    result = catch(:authorize_error) do
+      return check_user
+    end
+
+    result
   end
 
   private
 
   attr_reader :headers
 
-  def user
-    # check if user is in the database
-    # memoize user object
-    @user ||= User.find(decoded_auth_token[:user_id]) if decoded_auth_token
-    # handle user not found
-  rescue ActiveRecord::RecordNotFound => e
-    # raise custom error
-    raise InvalidTokenError, ("#{Message.invalid_token} #{e.message}")
+  def check_user
+    user = find_user
+    return user if user.success?
+
+    # if no user is found, it throws an error
+    throw :authorize_error, user
   end
 
-  # decode authentication token
+  def find_user
+    @user ||= User.find(decoded_auth_token[:user_id])
+    Result.new(@user, true, false, nil)
+  rescue ActiveRecord::RecordNotFound
+    Result.new(nil, false, true, Message.invalid_token)
+  end
+
   def decoded_auth_token
-    @decoded_auth_token ||= JsonWebToken.decode(http_auth_header)
+    @decoded_auth_token ||= Authentication::JsonWebToken.decode(http_auth_header)
   end
 
-  # check for token in `Authorization` header
   def http_auth_header
-    return headers['Authorization'].split(' ').last if headers['Authorization'].present?
-
-    raise MissingTokenError, Message.missing_token
+    if headers['Authorization'].present?
+      headers['Authorization'].split(' ').last
+    else
+      throw :authorize_error, Result.new(nil, false, true, Message.missing_headers)
+    end
   end
 end
