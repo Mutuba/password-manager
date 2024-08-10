@@ -5,7 +5,7 @@ class RegistrationController < ApplicationController
   skip_before_action :authorize_request, only: :sign_up
 
   def sign_up
-    user = User.create!(user_params)
+    user = User.create!(registration_params)
     result = AuthenticateUserService.call(username: user.username, password: user.password)
     raise AuthenticationError, Message.invalid_credentials unless result.success?
 
@@ -15,7 +15,7 @@ class RegistrationController < ApplicationController
 
   private
 
-  def user_params
+  def registration_params
     params.require(:user).permit(
       :username,
       :email,
