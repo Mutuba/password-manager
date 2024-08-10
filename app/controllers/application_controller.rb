@@ -5,7 +5,6 @@ class ApplicationController < ActionController::API
   include ExceptionHandler
   include JsonResponse
 
-  # called before every action on controllers
   before_action :authorize_request
   attr_reader :current_user
 

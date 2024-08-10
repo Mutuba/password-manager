@@ -2,12 +2,14 @@
 
 # app/controllers/users_controller.rb
 class RegistrationController < ApplicationController
-  skip_before_action :authorize_request, only: :create
+  skip_before_action :authorize_request, only: :sign_up
 
-  def signup
+  def sign_up
     user = User.create!(user_params)
-    auth_token = AuthenticateUserService.call(username: user.username, password: user.password)
-    response = { message: Message.account_created, auth_token: }
+    result = AuthenticateUserService.call(username: user.username, password: user.password)
+    raise AuthenticationError, Message.invalid_credentials unless result.success?
+
+    response = { message: Message.account_created, auth_token: result[:auth_token] }
     json_response(response, :created)
   end
 
