@@ -20,10 +20,17 @@ module RequestSpecHelper
   end
 
   # return valid headers
-  # car = {:make => "bmw", :year => "2003"}
-  def valid_headers(user)
+  def valid_headers(user_id)
     {
-      'Authorization' => token_generator(user.id),
+      'Authorization' => token_generator(user_id),
+      'Content-Type' => 'application/json'
+    }
+  end
+
+  # return expired headers
+  def expired_headers(user_id)
+    {
+      'Authorization' => expired_token_generator(user_id),
       'Content-Type' => 'application/json'
     }
   end

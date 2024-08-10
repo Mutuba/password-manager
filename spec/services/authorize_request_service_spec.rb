@@ -5,8 +5,9 @@ require 'rails_helper'
 RSpec.describe AuthorizeRequestService, type: :service do
   describe '# call' do
     let(:user) { create(:user) }
-    let(:headers) { valid_headers(user) }
+    let(:headers) { valid_headers(user.id) }
     let(:nil_token_headers) { invalid_headers }
+    let(:expired_token) { expired_headers(user.id) }
 
     context 'when a user exists' do
       it 'should return a result with user' do
@@ -23,6 +24,12 @@ RSpec.describe AuthorizeRequestService, type: :service do
         expect(result.failure_message).to eq 'Missing authorization header'
         expect(result.success?).to eq false
         expect(result.failure?).to eq true
+      end
+    end
+
+    context 'with expired token' do
+      it 'should raise decode token error' do
+        expect { AuthorizeRequestService.call(**expired_token) }.to raise_error(JWT::ExpiredSignature, 'Signature has expired')
       end
     end
   end

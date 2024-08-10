@@ -15,7 +15,7 @@ module Authentication
       HashWithIndifferentAccess.new body
       # Handle general decoding errors
     rescue JWT::DecodeError => e
-      raise "Token decoding error: #{e.message}"
+      raise e
     end
   end
 end
