@@ -18,9 +18,9 @@ RSpec.describe AuthorizeRequestService, type: :service do
 
     context 'with nil token' do
       it 'should not return token' do
-        result = AuthorizeRequestService.call(**nil_token_headers)        
+        result = AuthorizeRequestService.call(**nil_token_headers)
         expect(result.user).to be_nil
-        expect(result.failure_message).to eq "Missing authorization header"
+        expect(result.failure_message).to eq 'Missing authorization header'
         expect(result.success?).to eq false
         expect(result.failure?).to eq true
       end

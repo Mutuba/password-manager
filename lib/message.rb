@@ -32,5 +32,5 @@ class Message
 
   def self.missing_headers
     'Missing authorization header'
-  end  
+  end
 end

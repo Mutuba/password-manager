@@ -10,11 +10,9 @@ class AuthorizeRequestService < ApplicationService
   end
 
   def call
-    result = catch(:authorize_error) do
+    catch(:authorize_error) do
       return check_user
     end
-
-    result
   end
 
   private
