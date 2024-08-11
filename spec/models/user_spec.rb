@@ -14,14 +14,26 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  # Associations
-  it { should have_many :vaults }
+  describe 'associations' do
+    it { should have_many :vaults }
+  end
 
-  # Validate columns
-  it { should have_db_column(:username).of_type :string }
-  it { should have_db_column(:password_digest).of_type :string }
+  describe 'column validations' do
+    it { should have_db_column(:username).of_type :string }
+    it { should have_db_column(:password_digest).of_type :string }
+  end
 
-  # Presence Validation
-  it { should validate_presence_of(:password_digest) }
-  it { should validate_presence_of(:username) }
+  describe 'validations' do
+    subject { build(:user) }
+    it { should validate_presence_of(:password) }
+    it { should validate_presence_of(:username) }
+    it { should validate_presence_of(:email) }
+    it { should validate_uniqueness_of(:email) }
+    it { should validate_uniqueness_of(:username) }
+    it do
+      should validate_length_of(:password)
+        .is_at_least(6)
+        .on(:create)
+    end
+  end
 end
