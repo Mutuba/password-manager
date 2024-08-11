@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe AuthenticationController, type: :request do
-  let(:user) { create(:user) }
   let(:params) { { user: attributes_for(:user) } }
   let(:invalid_params) { { user: { username: 'Mr Bean', password: 'random_password' } } }
 
@@ -20,6 +19,18 @@ RSpec.describe AuthenticationController, type: :request do
       before { post sign_up_path, params: invalid_params }
       it 'should return errors' do
         expect(json_response['error']).to eq "Validation failed: Email can't be blank, Email is invalid"
+        expect(response).to have_http_status(422)
+      end
+    end
+
+    context 'when user already exists' do
+      let(:user) { create(:user) }
+
+      before do
+        post sign_up_path, params: { user: { email: user.email, username: user.username, password: user.password } }
+      end
+      it 'should return errors' do
+        expect(json_response['error']).to eq 'Validation failed: Email has already been taken, Username has already been taken'
         expect(response).to have_http_status(422)
       end
     end
