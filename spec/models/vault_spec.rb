@@ -4,11 +4,13 @@
 #
 # Table name: vaults
 #
-#  id         :bigint           not null, primary key
-#  name       :string           not null
-#  user_id    :bigint           not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id                   :bigint           not null, primary key
+#  name                 :string           not null
+#  user_id              :bigint           not null
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  encrypted_master_key :text             not null
+#  salt                 :binary           not null
 #
 require 'rails_helper'
 
