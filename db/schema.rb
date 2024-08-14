@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -10,42 +12,42 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_11_115429) do
+ActiveRecord::Schema[7.1].define(version: 20_240_811_115_429) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+  enable_extension 'plpgsql'
 
-  create_table "password_records", force: :cascade do |t|
-    t.bigint "vault_id", null: false
-    t.string "name", null: false
-    t.string "username", null: false
-    t.string "encrypted_password", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["name", "vault_id"], name: "index_password_records_on_name_and_vault_id", unique: true
-    t.index ["vault_id"], name: "index_password_records_on_vault_id"
+  create_table 'password_records', force: :cascade do |t|
+    t.bigint 'vault_id', null: false
+    t.string 'name', null: false
+    t.string 'username', null: false
+    t.string 'encrypted_password', null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index %w[name vault_id], name: 'index_password_records_on_name_and_vault_id', unique: true
+    t.index ['vault_id'], name: 'index_password_records_on_vault_id'
   end
 
-  create_table "users", force: :cascade do |t|
-    t.string "username", null: false
-    t.string "password_digest", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "email"
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["username"], name: "index_users_on_username", unique: true
+  create_table 'users', force: :cascade do |t|
+    t.string 'username', null: false
+    t.string 'password_digest', null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.string 'email'
+    t.index ['email'], name: 'index_users_on_email', unique: true
+    t.index ['username'], name: 'index_users_on_username', unique: true
   end
 
-  create_table "vaults", force: :cascade do |t|
-    t.string "name", null: false
-    t.bigint "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "encrypted_master_key", null: false
-    t.binary "salt", null: false
-    t.index ["name", "user_id"], name: "index_vaults_on_name_and_user_id", unique: true
-    t.index ["user_id"], name: "index_vaults_on_user_id"
+  create_table 'vaults', force: :cascade do |t|
+    t.string 'name', null: false
+    t.bigint 'user_id', null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.text 'encrypted_master_key', null: false
+    t.binary 'salt', null: false
+    t.index %w[name user_id], name: 'index_vaults_on_name_and_user_id', unique: true
+    t.index ['user_id'], name: 'index_vaults_on_user_id'
   end
 
-  add_foreign_key "password_records", "vaults"
-  add_foreign_key "vaults", "users"
+  add_foreign_key 'password_records', 'vaults'
+  add_foreign_key 'vaults', 'users'
 end

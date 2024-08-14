@@ -19,22 +19,21 @@ class Vault < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :user_id }
   validates :encrypted_master_key, :salt, presence: true
 
-  def set_master_key(master_password)
+  def generate_encrypted_master_key(master_password)
     salt = OpenSSL::Random.random_bytes(16)
     master_key = derive_key_from_password(master_password, salt)
-    self.encrypted_master_key = EncryptionService.encrypt_data(master_key, KEK)
+    self.encrypted_master_key = EncryptionService.encrypt_data(master_key:, encryption_key: key_encryption_key)
     self.salt = salt
     save!
   end
 
-  def get_master_key
-    decrypted_key = EncryptionService.decrypt_data(encrypted_master_key, KEK)
-    decrypted_key
+  def master_key
+    EncryptionService.decrypt_data(encrypted_password: encrypted_master_key, encryption_key: key_encryption_key)
   end
 
   private
 
-  def derive_key_from_password(password, salt, iterations = 20000, length = 32)
-    OpenSSL::PKCS5.pbkdf2_hmac(password, salt, iterations, length, 'sha256')
+  def derive_key_from_password(password, salt, iterations = 20_000, length = 32)
+    OpenSSL::PKCS5.pbkdf2_hmac(password.to_s, salt, iterations, length, 'sha256')
   end
 end
