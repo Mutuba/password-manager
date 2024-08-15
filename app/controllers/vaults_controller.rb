@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
 # VaultsController is responsible for managing the creation of Vaults.
-# 
-# This controller handles the creation of vaults by accepting parameters 
-# such as the vault name and user ID. It also requires a master password 
+#
+# This controller handles the creation of vaults by accepting parameters
+# such as the vault name and user ID. It also requires a master password
 # to be provided in order to generate an encrypted master key for the vault.
-# 
+#
 # Methods:
 #   - create: Creates a new vault with the provided parameters and master password.
-# 
+#
 # Usage:
-#   - Send a POST request to create a new vault. The request must include 
+#   - Send a POST request to create a new vault. The request must include
 #     a vault name, user ID, and master password.
-# 
+#
 # Example:
 #   POST /vaults
 #   {
@@ -32,7 +32,7 @@
 #     "created_at": "2024-08-14T12:00:00Z",
 #     "updated_at": "2024-08-14T12:00:00Z"
 #   }
-# 
+#
 #   Response (Failure):
 #   Status: 422 Unprocessable Entity
 #   {

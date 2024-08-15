@@ -10,15 +10,20 @@ class EncryptionService
   # @param data [String] The plaintext data to be encrypted.
   # @param encryption_key [String] The Base64 encoded 256-bit encryption key.
   # @return [String] The IV, encrypted data, and auth tag, encoded in Base64, separated by "--".
+  class EncryptionError < ArgumentError; end
+
   def self.encrypt_data(data:, encryption_key:)
-    cipher = OpenSSL::Cipher::AES256.new(:GCM)
-    cipher.encrypt
-    cipher.key = decode_and_validate_key(encryption_key)
-    cipher.iv = iv = cipher.random_iv
+    cipher = initialize_cipher(:encrypt, encryption_key)
+    isolation_vector = cipher.random_iv
     encrypted = cipher.update(data) + cipher.final
     auth_tag = cipher.auth_tag
-    
-    "#{Base64.encode64(iv)}--#{Base64.encode64(encrypted)}--#{Base64.encode64(auth_tag)}"
+    encode_encrypted_data(isolation_vector, encrypted, auth_tag)
+  rescue OpenSSL::Cipher::CipherError => e
+    raise "Encryption failed: #{e.message}"
+  rescue ArgumentError => e
+    raise EncryptionError, e.message
+  rescue StandardError => e
+    raise "Unexpected error during encryption: #{e.message}"
   end
 
   # Decrypts the provided encrypted data using AES-256-GCM.
@@ -28,17 +33,48 @@ class EncryptionService
   # @return [String] The decrypted plaintext data.
   # @raise [OpenSSL::Cipher::CipherError] if decryption fails (e.g., if data was tampered with).
   def self.decrypt_data(encrypted_data:, encryption_key:)
-    iv, encrypted, auth_tag = encrypted_data.split("--").map { |v| Base64.decode64(v) }
-    
-    cipher = OpenSSL::Cipher::AES256.new(:GCM)
-    cipher.decrypt
-    cipher.key = decode_and_validate_key(encryption_key)
-    cipher.iv = iv
-    cipher.auth_tag = auth_tag
+    isolation_vector, encrypted, auth_tag = decode_encrypted_data(encrypted_data)
+    cipher = initialize_cipher(:decrypt, encryption_key, isolation_vector, auth_tag)
     cipher.update(encrypted) + cipher.final
+  rescue OpenSSL::Cipher::CipherError => e
+    raise "Decryption failed: #{e.message}"
+  rescue StandardError => e
+    raise "Unexpected error during decryption: #{e.message}"
   end
 
-  private
+  # Initializes and configures the AES-256-GCM cipher.
+  #
+  # @param mode [Symbol] The mode, either :encrypt or :decrypt.
+  # @param encryption_key [String] The Base64 encoded 256-bit encryption key.
+  # @param isolation_vector [String] The initialization vector for decryption (optional).
+  # @param auth_tag [String] The authentication tag for decryption (optional).
+  # @return [OpenSSL::Cipher] The configured cipher.
+  def self.initialize_cipher(mode, encryption_key, isolation_vector = nil, auth_tag = nil)
+    cipher = OpenSSL::Cipher.new('aes-256-gcm')
+    cipher.send(mode)
+    cipher.key = decode_and_validate_key(encryption_key)
+    cipher.iv = isolation_vector if isolation_vector
+    cipher.auth_tag = auth_tag if auth_tag
+    cipher
+  end
+
+  # Encodes the IV, encrypted data, and auth tag into a single string.
+  #
+  # @param isolation_vector [String] The initialization vector.
+  # @param encrypted [String] The encrypted data.
+  # @param auth_tag [String] The authentication tag.
+  # @return [String] The Base64 encoded data string.
+  def self.encode_encrypted_data(isolation_vector, encrypted, auth_tag)
+    [isolation_vector, encrypted, auth_tag].map { |v| Base64.encode64(v) }.join('--')
+  end
+
+  # Decodes the encrypted data string into its components.
+  #
+  # @param encrypted_data [String] The Base64 encoded data string.
+  # @return [Array<String>] The decoded IV, encrypted data, and auth tag.
+  def self.decode_encrypted_data(encrypted_data)
+    encrypted_data.split('--').map { |v| Base64.decode64(v) }
+  end
 
   # Decodes the Base64 encoded encryption key and validates its length.
   #
@@ -48,6 +84,7 @@ class EncryptionService
   def self.decode_and_validate_key(key)
     decoded_key = Base64.decode64(key)
     raise ArgumentError, 'key must be 32 bytes' unless decoded_key.bytesize == 32
+
     decoded_key
   end
 end

@@ -12,6 +12,9 @@
 #  encrypted_master_key :text             not null
 #  salt                 :binary           not null
 #
+require 'openssl'
+
+# Vault class
 class Vault < ApplicationRecord
   belongs_to :user
   has_many :password_records
