@@ -19,16 +19,16 @@ class Vault < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :user_id }
   validates :encrypted_master_key, :salt, presence: true
 
-  def generate_encrypted_master_key(master_password)
+  def add_encrypted_master_key(master_password)
     salt = OpenSSL::Random.random_bytes(16)
     master_key = derive_key_from_password(master_password, salt)
-    self.encrypted_master_key = EncryptionService.encrypt_data(master_key:, encryption_key: key_encryption_key)
+    self.encrypted_master_key = EncryptionService.encrypt_data(data: master_key, encryption_key: KEK)
     self.salt = salt
     save!
   end
 
   def master_key
-    EncryptionService.decrypt_data(encrypted_password: encrypted_master_key, encryption_key: key_encryption_key)
+    EncryptionService.decrypt_data(encrypted_data: encrypted_master_key, encryption_key: KEK)
   end
 
   private

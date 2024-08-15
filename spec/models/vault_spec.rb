@@ -22,7 +22,7 @@ RSpec.describe Vault, type: :model do
 
   describe 'validations' do
     let(:vault) { build(:vault) }
-    before { vault.generate_encrypted_master_key(Random.new_seed) }
+    before { vault.add_encrypted_master_key(SecureRandom.uuid) }
     it { should validate_presence_of :name }
     it { should validate_uniqueness_of(:name).scoped_to(:user_id) }
   end

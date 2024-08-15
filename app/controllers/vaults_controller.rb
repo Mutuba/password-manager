@@ -42,7 +42,7 @@
 class VaultsController < ApplicationController
   def create
     @vault = Vault.new(vault_params)
-    @vault.set_master_key(params[:master_password])
+    @vault.add_encrypted_master_key(params[:master_password])
 
     if @vault.save
       render json: @vault, status: :created
