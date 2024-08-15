@@ -37,7 +37,7 @@ class EncryptionService
   def self.decrypt_data(encrypted_data:, encryption_key:)
     isolation_vector, encrypted, auth_tag = decode_encrypted_data(encrypted_data)
     cipher = initialize_cipher(:decrypt, encryption_key, isolation_vector, auth_tag)
-    
+
     cipher.update(encrypted) + cipher.final
   rescue OpenSSL::Cipher::CipherError => e
     raise "Decryption failed: #{e.message}"

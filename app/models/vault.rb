@@ -14,7 +14,6 @@
 #
 require 'openssl'
 
-# Vault class
 class Vault < ApplicationRecord
   belongs_to :user
   has_many :password_records
