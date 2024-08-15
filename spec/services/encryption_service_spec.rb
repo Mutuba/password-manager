@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe EncryptionService do
-  describe '.encrypt_data' do
+  describe 'data encryption and decryption' do
     let(:master_password) { SecureRandom.uuid }
     let(:salt) { OpenSSL::Random.random_bytes(16) }
     let(:master_key) { OpenSSL::PKCS5.pbkdf2_hmac(master_password.to_s, salt, 20_000, 32, 'sha256') }
@@ -35,6 +35,15 @@ RSpec.describe EncryptionService do
 
       expect do
         EncryptionService.decrypt_data(encrypted_data: tampered_result, encryption_key: kek)
+      end.to raise_error(OpenSSL::Cipher::CipherError)
+    end
+
+    it 'raises an error when decrypting with a different key' do
+      different_key = Base64.strict_encode64(OpenSSL::Random.random_bytes(32))
+      result = EncryptionService.encrypt_data(data: master_key, encryption_key: kek)
+
+      expect do
+        EncryptionService.decrypt_data(encrypted_data: result, encryption_key: different_key)
       end.to raise_error(OpenSSL::Cipher::CipherError)
     end
   end
