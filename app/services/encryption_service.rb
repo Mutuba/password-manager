@@ -21,7 +21,7 @@ class EncryptionService
 
     encode_encrypted_data(isolation_vector, encrypted, auth_tag)
   rescue OpenSSL::Cipher::CipherError => e
-    raise "Encryption failed: #{e.message}"
+    raise e
   rescue ArgumentError => e
     raise EncryptionError, e.message
   rescue StandardError => e
@@ -40,7 +40,7 @@ class EncryptionService
 
     cipher.update(encrypted) + cipher.final
   rescue OpenSSL::Cipher::CipherError => e
-    raise "Decryption failed: #{e.message}"
+    raise e
   rescue StandardError => e
     raise "Unexpected error during decryption: #{e.message}"
   end
