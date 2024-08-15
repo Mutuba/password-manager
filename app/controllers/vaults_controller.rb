@@ -7,37 +7,7 @@
 # to be provided in order to generate an encrypted master key for the vault.
 #
 # Methods:
-#   - create: Creates a new vault with the provided parameters and master password.
-#
-# Usage:
-#   - Send a POST request to create a new vault. The request must include
-#     a vault name, user ID, and master password.
-#
-# Example:
-#   POST /vaults
-#   {
-#     "vault": {
-#       "name": "Personal Vault",
-#       "user_id": 1
-#     },
-#     "master_password": "your_master_password"
-#   }
-#
-#   Response (Success):
-#   Status: 201 Created
-#   {
-#     "id": 1,
-#     "name": "Personal Vault",
-#     "user_id": 1,
-#     "created_at": "2024-08-14T12:00:00Z",
-#     "updated_at": "2024-08-14T12:00:00Z"
-#   }
-#
-#   Response (Failure):
-#   Status: 422 Unprocessable Entity
-#   {
-#     "errors": ["Name can't be blank", "Encrypted master key can't be blank"]
-#   }
+#   - create: Creates a new vault with the provided parameters and master password
 #
 class VaultsController < ApplicationController
   def create
@@ -48,6 +18,16 @@ class VaultsController < ApplicationController
       render json: @vault, status: :created
     else
       render json: { errors: @vault.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def login
+    @vault = Vault.find_by(id: params[:id], user_id: params[:user_id])
+
+    if @vault&.authenticate_master_password(params[:master_password])
+      render json: { message: 'Login successful' }, status: :ok
+    else
+      render json: { error: 'Invalid master password' }, status: :unauthorized
     end
   end
 

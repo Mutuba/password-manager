@@ -29,8 +29,17 @@ class Vault < ApplicationRecord
     save!
   end
 
-  def master_key
-    EncryptionService.decrypt_data(encrypted_data: encrypted_master_key, encryption_key: KEK)
+  def authenticate_master_password(input_password)
+    derived_key = derive_key_from_password(input_password, salt)
+
+    decrypted_master_key = EncryptionService.decrypt_data(
+      encrypted_data: encrypted_master_key,
+      encryption_key: KEK
+    )
+
+    ActiveSupport::SecurityUtils.secure_compare(derived_key, decrypted_master_key)
+  rescue OpenSSL::Cipher::CipherError
+    false
   end
 
   private
