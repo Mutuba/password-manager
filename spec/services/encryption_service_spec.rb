@@ -32,11 +32,10 @@ RSpec.describe EncryptionService do
     it 'raises an error when encrypted data is tampered with' do
       result = EncryptionService.encrypt_data(data: master_key, encryption_key: kek)
       tampered_result = result.sub(result[10], 'x')
-    
-      expect {
+
+      expect do
         EncryptionService.decrypt_data(encrypted_data: tampered_result, encryption_key: kek)
-      }.to raise_error(OpenSSL::Cipher::CipherError)
+      end.to raise_error(OpenSSL::Cipher::CipherError)
     end
-    
   end
 end
