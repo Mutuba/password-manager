@@ -46,5 +46,38 @@ RSpec.describe EncryptionService do
         EncryptionService.decrypt_data(encrypted_data: result, encryption_key: different_key)
       end.to raise_error(OpenSSL::Cipher::CipherError)
     end
+
+    it 'correctly encrypts and decrypts empty data' do
+      result = EncryptionService.encrypt_data(data: '', encryption_key: kek)
+    
+      decrypted_data = EncryptionService.decrypt_data(encrypted_data: result, encryption_key: kek)
+      expect(decrypted_data).to eq('')
+    end
+
+    it 'correctly encrypts and decrypts a string with special characters' do
+      special_data = '!@#$%^&*()_+-={}[]|:;<>,.?/~`'
+      result = EncryptionService.encrypt_data(data: special_data, encryption_key: kek)
+    
+      decrypted_data = EncryptionService.decrypt_data(encrypted_data: result, encryption_key: kek)
+      expect(decrypted_data).to eq(special_data)
+    end
+
+    it 'raises an error when decrypting with a different IV' do
+      result = EncryptionService.encrypt_data(data: master_key, encryption_key: kek)
+      parts = result.split('--')
+      tampered_iv = Base64.strict_encode64(OpenSSL::Random.random_bytes(12))
+      tampered_result = [tampered_iv, parts[1], parts[2]].join('--')
+    
+      expect {
+        EncryptionService.decrypt_data(encrypted_data: tampered_result, encryption_key: kek)
+      }.to raise_error(OpenSSL::Cipher::CipherError)
+    end
+
+    it 'ensures that encrypting the same data with the same key multiple times results in different outputs' do
+      result1 = EncryptionService.encrypt_data(data: master_key, encryption_key: kek)
+      result2 = EncryptionService.encrypt_data(data: master_key, encryption_key: kek)
+    
+      expect(result1).not_to eq(result2)
+    end
   end
 end

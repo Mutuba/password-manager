@@ -39,7 +39,7 @@ class EncryptionService
     cipher = initialize_cipher(:decrypt, encryption_key, isolation_vector, auth_tag)
 
     cipher.update(encrypted) + cipher.final
-  rescue OpenSSL::Cipher::CipherError => e
+  rescue OpenSSL::Cipher::CipherError => e    
     raise e
   rescue StandardError => e
     raise "Unexpected error during decryption: #{e.message}"
