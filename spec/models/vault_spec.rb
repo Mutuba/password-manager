@@ -40,8 +40,16 @@ RSpec.describe Vault, type: :model do
       vault.save!
     end
 
-    it 'should authenticate with correct master password' do
-      expect(vault.authenticate_master_password('SecretPassword123')).to eq true
+    context 'with correct password' do
+      it 'should return true' do
+        expect(vault.authenticate_master_password('SecretPassword123')).to eq true
+      end
+    end
+
+    context 'with incorrect password' do
+      it 'should return false' do
+        expect(vault.authenticate_master_password('SecretPassword')).to eq false
+      end
     end
   end
 end
