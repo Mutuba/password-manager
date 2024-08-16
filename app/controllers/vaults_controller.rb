@@ -11,13 +11,13 @@
 #
 class VaultsController < ApplicationController
   def create
-    @vault = Vault.new(vault_params)
+    @vault = current_user.vaults.new(vault_params)
     @vault.add_encrypted_master_key(params[:master_password])
 
     if @vault.save
-      render json: @vault, status: :created
+      json_response(@vault, :created)
     else
-      render json: { errors: @vault.errors.full_messages }, status: :unprocessable_entity
+      json_response({ errors: @vault.errors.full_messages }, :unprocessable_entity)
     end
   end
 

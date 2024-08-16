@@ -12,6 +12,9 @@ class ApplicationController < ActionController::API
   private
 
   def authorize_request
-    @current_user = AuthorizeRequestService.call(request.headers)
+    result = AuthorizeRequestService.call(headers: request.headers)
+    raise AuthenticationError, result.failure_message unless result.success?
+
+    @current_user = result[:user]
   end
 end

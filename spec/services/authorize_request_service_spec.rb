@@ -11,7 +11,7 @@ RSpec.describe AuthorizeRequestService, type: :service do
 
     context 'when a user exists' do
       it 'should return a result with user' do
-        result = AuthorizeRequestService.call(**headers)
+        result = AuthorizeRequestService.call(headers:)
         expect(result.user).not_to be_nil
         expect(result.success?).to eq true
       end
@@ -19,7 +19,7 @@ RSpec.describe AuthorizeRequestService, type: :service do
 
     context 'with nil token' do
       it 'should not return token' do
-        result = AuthorizeRequestService.call(**nil_token_headers)
+        result = AuthorizeRequestService.call(headers: nil_token_headers)
         expect(result.user).to be_nil
         expect(result.failure_message).to eq 'Missing authorization header'
         expect(result.success?).to eq false
@@ -29,14 +29,14 @@ RSpec.describe AuthorizeRequestService, type: :service do
 
     context 'with expired token' do
       it 'should raise decode token error' do
-        expect { AuthorizeRequestService.call(**expired_token) }.to raise_error(JWT::ExpiredSignature, 'Signature has expired')
+        expect { AuthorizeRequestService.call(headers: expired_token) }.to raise_error(JWT::ExpiredSignature, 'Signature has expired')
       end
     end
 
     context 'when user is not found' do
       before { user.destroy! }
       it 'should raise decode token error' do
-        result = AuthorizeRequestService.call(**headers)
+        result = AuthorizeRequestService.call(headers:)
         expect(result.user).to be_nil
         expect(result.failure_message).to eq 'Invalid token'
         expect(result.success?).to eq false

@@ -3,20 +3,11 @@
 Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
 
-  # Defines the root path route ("/")
   # root "posts#index"
   post '/auth/sign_up', to: 'registration#sign_up', as: :sign_up
   post '/auth/login', to: 'authentication#login', as: :login
-end
 
-# Rails.application.routes.draw do
-#   namespace :api do
-#     namespace :v1 do
-#       post 'signup', to: 'users#create'
-#       post 'auth/login', to: 'authentication#authenticate'
-#       resources :todos do
-#         resources :items
-#       end
-#     end
-#   end
-# end
+  resources :vaults, only: %i[create]
+
+  post 'vaults/login', to: 'vaults#login', as: :vault_login
+end

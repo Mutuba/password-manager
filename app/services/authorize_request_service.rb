@@ -4,7 +4,7 @@
 class AuthorizeRequestService < ApplicationService
   Result = Struct.new(:user, :success?, :failure?, :failure_message)
 
-  def initialize(**headers)
+  def initialize(headers:)
     super()
     @headers = headers
   end
@@ -23,7 +23,6 @@ class AuthorizeRequestService < ApplicationService
     user = find_user
     return user if user.success?
 
-    # if no user is found, it throws an error
     throw :authorize_error, user
   end
 
