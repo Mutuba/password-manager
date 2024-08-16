@@ -12,14 +12,14 @@ RSpec.describe VaultsController, type: :request do
 
       it 'creates a new vault' do
         expect(response).to have_http_status(:created)
-        expect(json_response["data"]['attributes']['name']).to eq('Iconic vault')
+        expect(json_response['data']['attributes']['name']).to eq('Iconic vault')
       end
     end
 
     context 'when user is not authenticated' do
       before { post vaults_path, params: { vault: { name: 'Iconic vault' } }.to_json }
       it 'raises authentication error' do
-        expect(response).to have_http_status(:unauthorized)        
+        expect(response).to have_http_status(:unauthorized)
         expect(json_response['error']).to eq('Missing authorization header')
       end
     end

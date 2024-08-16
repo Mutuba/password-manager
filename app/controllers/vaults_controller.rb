@@ -5,16 +5,12 @@
 # This controller handles the creation of vaults by accepting parameters
 # such as the vault name and user ID. It also requires a master password
 # to be provided in order to generate an encrypted master key for the vault.
-#
-# Methods:
-#   - create: Creates a new vault with the provided parameters and master password
-#
 class VaultsController < ApplicationController
   def create
     @vault = current_user.vaults.new(vault_params)
     @vault.add_encrypted_master_key(params[:master_password])
 
-    if @vault.save      
+    if @vault.save
       render json: VaultSerializer.new(@vault).serializable_hash, status: :created
     else
       json_response({ errors: @vault.errors.full_messages }, :unprocessable_entity)
