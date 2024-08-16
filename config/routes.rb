@@ -9,5 +9,5 @@ Rails.application.routes.draw do
 
   resources :vaults, only: %i[create]
 
-  post 'vaults/login', to: 'vaults#login', as: :vault_login
+  post 'vaults/:id/login', to: 'vaults#login', as: :vault_login
 end

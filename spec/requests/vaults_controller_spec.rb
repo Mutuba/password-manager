@@ -25,12 +25,19 @@ RSpec.describe VaultsController, type: :request do
     end
   end
 
-  # describe '#login' do
-  #   context 'when user is authenticated' do
-  #     before do
-  #       let(:vaults) {create_list(:vault, 4, user:) }
+  describe '#login' do
+    context 'when user is authenticated' do
+      let(:vault) { build(:vault, user: ) }
+      before do
+        vault.add_encrypted_master_key('Favouritepassword123')
+        vault.save!
+        post vault_login_path(vault.id), params: { master_password: 'Favouritepassword123' }.to_json, headers:
+      end
 
-  #     end
-  #   end
-  # end
+      it 'logs in' do
+        expect(response).to have_http_status(:success)
+        expect(json_response['message']).to eq 'Login successful'
+      end
+    end
+  end
 end
