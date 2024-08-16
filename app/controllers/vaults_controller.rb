@@ -12,6 +12,9 @@ class VaultsController < ApplicationController
     vault.add_encrypted_master_key(vault_params[:master_password])
 
     if vault.save
+      
+      binding.pry
+      
       render json: VaultSerializer.new(vault).serializable_hash, status: :created
     else
       json_response({ errors: vault.errors.full_messages }, :unprocessable_entity)
