@@ -7,8 +7,8 @@
 # to be provided in order to generate an encrypted master key for the vault.
 class VaultsController < ApplicationController
   def create
-    @vault = current_user.vaults.new(vault_params)
-    @vault.add_encrypted_master_key(params[:master_password])
+    @vault = current_user.vaults.new(vault_params.except(:master_password))
+    @vault.add_encrypted_master_key(vault_params[:master_password])
 
     if @vault.save
       render json: VaultSerializer.new(@vault).serializable_hash, status: :created
@@ -30,6 +30,6 @@ class VaultsController < ApplicationController
   private
 
   def vault_params
-    params.require(:vault).permit(:name, :user_id)
+    params.require(:vault).permit(:name, :master_password)
   end
 end

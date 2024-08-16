@@ -22,6 +22,8 @@ class Vault < ApplicationRecord
   validates :encrypted_master_key, :salt, presence: true
 
   def add_encrypted_master_key(master_password)
+    raise ActiveRecord::RecordInvalid unless master_password
+
     salt = OpenSSL::Random.random_bytes(16)
     master_key = derive_key_from_password(master_password, salt)
     self.encrypted_master_key = EncryptionService.encrypt_data(data: master_key, encryption_key: KEK)
