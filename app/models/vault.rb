@@ -22,7 +22,10 @@ class Vault < ApplicationRecord
   validates :encrypted_master_key, :salt, presence: true
 
   def add_encrypted_master_key(master_password)
-    raise ActiveRecord::RecordInvalid unless master_password
+    unless validate_master_password_strength(master_password)
+      errors.add(:base, 'Master password must be at least 8 characters long and include letters, numbers, and special characters')
+      raise ActiveRecord::RecordInvalid, self
+    end
 
     salt = OpenSSL::Random.random_bytes(16)
     master_key = derive_key_from_password(master_password, salt)
@@ -45,6 +48,10 @@ class Vault < ApplicationRecord
   end
 
   private
+
+  def validate_master_password_strength(password)
+    password.present? && password.match?(/\A(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}\z/)
+  end
 
   def derive_key_from_password(password, salt, iterations = 20_000, length = 32)
     OpenSSL::PKCS5.pbkdf2_hmac(password.to_s, salt, iterations, length, 'sha256')

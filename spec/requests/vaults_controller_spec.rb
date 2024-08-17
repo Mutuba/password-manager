@@ -23,6 +23,14 @@ RSpec.describe VaultsController, type: :request do
         expect(json_response['error']).to eq('Missing authorization header')
       end
     end
+    context 'when password does not meet the requirements' do
+      before { post vaults_path, params: { vault: { name: 'Game of Thrones', master_password: 'tooshort' } }.to_json, headers: }
+
+      it 'raises validation error' do
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(json_response['error']).to eq 'Validation failed: Master password must be at least 8 characters long and include letters, numbers, and special characters'
+      end
+    end
   end
 
   describe '#login' do
