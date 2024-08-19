@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   post '/auth/sign_up', to: 'registration#sign_up', as: :sign_up
   post '/auth/login', to: 'authentication#login', as: :login
 
-  resources :vaults, only: %i[create]
+  resources :vaults
 
   post 'vaults/:id/login', to: 'vaults#login', as: :vault_login
 end

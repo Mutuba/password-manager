@@ -8,7 +8,7 @@ RSpec.describe VaultsController, type: :request do
 
   describe '#create' do
     context 'when user is authenticated' do
-      before { post vaults_path, params: { vault: { name: 'Iconic vault', master_password: 'Favouritepassword123' } }.to_json, headers: }
+      before { post vaults_path, params: { vault: { name: 'Iconic vault', master_password: 'Favouritepassword123!' } }.to_json, headers: }
 
       it 'creates a new vault' do
         expect(response).to have_http_status(:created)
@@ -17,7 +17,7 @@ RSpec.describe VaultsController, type: :request do
     end
 
     context 'when user is not authenticated' do
-      before { post vaults_path, params: { vault: { name: 'Iconic vault', master_password: 'Favouritepassword123' } }.to_json }
+      before { post vaults_path, params: { vault: { name: 'Iconic vault', master_password: 'Favouritepassword123!' } }.to_json }
       it 'raises authentication error' do
         expect(response).to have_http_status(:unauthorized)
         expect(json_response['error']).to eq('Missing authorization header')
@@ -35,17 +35,19 @@ RSpec.describe VaultsController, type: :request do
 
   describe '#login' do
     let(:vault) { build(:vault, user:) }
-    let(:valid_password) { 'FavouritePassword123' }
+    let(:valid_password) { 'FavouritePassword123!' }
     let(:headers) { valid_headers(user.id) }
+    let(:session_key) { "vault:#{vault.id}:user:#{user.id}" }
 
     before do
       vault.add_encrypted_master_key(valid_password)
       vault.save!
+      allow(REDIS).to receive(:setex)
     end
 
     context 'when correct password' do
       before do
-        post vault_login_path(vault.id), params: { master_password: 'FavouritePassword123' }.to_json, headers:
+        post vault_login_path(vault.id), params: { vault: { master_password: 'FavouritePassword123!' } }.to_json, headers:
       end
 
       it 'logs in' do
@@ -56,7 +58,7 @@ RSpec.describe VaultsController, type: :request do
 
     context 'when wrong password' do
       before do
-        post vault_login_path(vault.id), params: { master_password: 'Password1234' }.to_json, headers:
+        post vault_login_path(vault.id), params: { vault: { master_password: 'Password1234' } }.to_json, headers:
       end
 
       it 'does not login in' do

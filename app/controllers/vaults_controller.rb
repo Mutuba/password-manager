@@ -6,7 +6,17 @@
 # such as the vault name and user ID. It also requires a master password
 # to be provided in order to generate an encrypted master key for the vault.
 class VaultsController < ApplicationController
-  before_action :set_vault, only: %i[login]
+  before_action :set_vault, except: %i[create index]
+
+  def index
+    @vaults = current_user.vaults
+    render json: VaultsController.new(@vaults).serializable_hash, status: :ok
+  end
+
+  def show
+    render json: VaultsController.new(@vault).serializable_hash, status: :ok
+  end
+
   def create
     vault = current_user.vaults.new(vault_params.except(:master_password))
     vault.add_encrypted_master_key(vault_params[:master_password])
@@ -18,13 +28,32 @@ class VaultsController < ApplicationController
     end
   end
 
+  def update
+    if @vault.update(vault_params.except(:master_password))
+      render json: VaultSerializer.new(@vault).serializable_hash, status: :ok
+    else
+      json_response({ errors: vault.errors.full_messages }, :unprocessable_entity)
+    end
+  end
+
+  def destroy
+    @vault.destroy
+    head :no_content
+  end
+
   def login
-    if @vault&.authenticate_master_password(params[:master_password])
+    if @vault&.authenticate_master_password(vault_params[:master_password])
+      hashed_value = Digest::SHA256.hexdigest("authenticated#{current_user.id}")
+      hashed_session_key = Digest::SHA256.hexdigest("vault:#{@vault.id}:user:#{current_user.id}")
+
+      REDIS.setex(hashed_session_key, 10.minutes, hashed_value)
       render json: { message: 'Login successful' }, status: :ok
     else
       render json: { error: 'Invalid password' }, status: :unauthorized
     end
   end
+
+  def logout; end
 
   private
 
