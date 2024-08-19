@@ -5,6 +5,7 @@
 # This controller handles the creation of vaults by accepting parameters
 # such as the vault name and user ID. It also requires a master password
 # to be provided in order to generate an encrypted master key for the vault.
+#
 class VaultsController < ApplicationController
   before_action :set_vault, except: %i[create index]
 
