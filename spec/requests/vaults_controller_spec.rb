@@ -53,6 +53,7 @@ RSpec.describe VaultsController, type: :request do
       it 'logs in' do
         expect(response).to have_http_status(:success)
         expect(json_response['message']).to eq 'Login successful'
+        expect(REDIS).to have_received(:setex)
       end
     end
 
