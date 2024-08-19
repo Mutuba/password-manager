@@ -42,11 +42,11 @@ RSpec.describe VaultsController, type: :request do
     before do
       vault.add_encrypted_master_key(valid_password)
       vault.save!
-      allow(REDIS).to receive(:setex)
     end
 
     context 'when correct password' do
       before do
+        allow(REDIS).to receive(:setex)
         post vault_login_path(vault.id), params: { vault: { master_password: 'FavouritePassword123!' } }.to_json, headers:
       end
 
