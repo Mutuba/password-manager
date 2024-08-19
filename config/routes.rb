@@ -10,4 +10,5 @@ Rails.application.routes.draw do
   resources :vaults
 
   post 'vaults/:id/login', to: 'vaults#login', as: :vault_login
+  post 'vaults/:id/logout', to: 'vaults#logout', as: :vault_logout
 end

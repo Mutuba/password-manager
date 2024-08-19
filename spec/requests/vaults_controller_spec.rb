@@ -37,7 +37,6 @@ RSpec.describe VaultsController, type: :request do
     let(:vault) { build(:vault, user:) }
     let(:valid_password) { 'FavouritePassword123!' }
     let(:headers) { valid_headers(user.id) }
-    let(:session_key) { "vault:#{vault.id}:user:#{user.id}" }
 
     before do
       vault.add_encrypted_master_key(valid_password)
@@ -65,6 +64,41 @@ RSpec.describe VaultsController, type: :request do
       it 'does not login in' do
         expect(response).to have_http_status(:unauthorized)
         expect(json_response['error']).to eq 'Invalid password'
+      end
+    end
+  end
+
+  describe '#logout' do
+    let(:vault) { build(:vault, user:) }
+    let(:valid_password) { 'FavouritePassword123!' }
+    let(:headers) { valid_headers(user.id) }
+
+    before do
+      vault.add_encrypted_master_key(valid_password)
+      vault.save!
+    end
+
+    context 'when there is a vault session' do
+      before do
+        allow(REDIS).to receive(:exists?).with(any_args).and_return 1
+        post vault_logout_path(vault.id), headers:
+      end
+
+      it 'logs out' do
+        expect(response).to have_http_status(:success)
+        expect(json_response['message']).to eq 'Logout successful'
+      end
+    end
+
+    context 'when there is no session' do
+      before do
+        allow(REDIS).to receive(:exists?).with(any_args).and_return 0
+        post vault_logout_path(vault.id), headers:
+      end
+
+      it 'does nothing' do
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(json_response['error']).to eq 'No active session found'
       end
     end
   end
