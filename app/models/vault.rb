@@ -56,4 +56,6 @@ class Vault < ApplicationRecord
   def derive_key_from_password(password, salt, iterations = 20_000, length = 32)
     OpenSSL::PKCS5.pbkdf2_hmac(password.to_s, salt, iterations, length, 'sha256')
   end
+
+  alias owner :user
 end
