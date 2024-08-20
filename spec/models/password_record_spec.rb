@@ -26,7 +26,19 @@ RSpec.describe PasswordRecord, type: :model do
   end
 
   describe 'Validate scoped uniqueness' do
-    subject { build(:password_record) }
-    it { should validate_uniqueness_of(:name).scoped_to(:vault_id) }
+    let(:user) { create(:user) }
+    let(:vault) { build(:vault, user: ) }
+    let(:valid_password) { 'FavouritePassword123!' }
+
+    before do
+      vault.add_encrypted_master_key(valid_password)
+      vault.save!
+    end
+
+    let!(:existing_password_record) { create(:password_record, vault: vault) }
+
+    it do
+      should validate_uniqueness_of(:name).scoped_to(:vault_id)
+    end
   end
 end
