@@ -15,7 +15,6 @@ module Authentication
       body = JWT.decode(token, HMAC_SECRET)[0]
       details = HashWithIndifferentAccess.new body
       Result.new(details[:user_id], true, false, nil)
-      # Handle general decoding errors
     rescue JWT::DecodeError => e
       Result.new(nil, false, true, e.message)
     end
