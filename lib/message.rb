@@ -22,6 +22,10 @@ class Message
     'Unauthorized request'
   end
 
+  def self.expired_token
+    'Signature has expired'
+  end
+
   def self.account_created
     'Account created successfully'
   end

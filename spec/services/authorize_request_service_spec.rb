@@ -29,7 +29,11 @@ RSpec.describe AuthorizeRequestService, type: :service do
 
     context 'with expired token' do
       it 'should raise decode token error' do
-        expect { AuthorizeRequestService.call(headers: expired_token) }.to raise_error(JWT::ExpiredSignature, 'Signature has expired')
+        result =  AuthorizeRequestService.call(headers: expired_token)
+        
+        expect(result.success?).to eq false
+        expect(result.failure_message).to eq 'Signature has expired'
+        expect(result.user).to be_nil
       end
     end
 

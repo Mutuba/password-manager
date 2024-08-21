@@ -27,15 +27,18 @@ class AuthorizeRequestService < ApplicationService
   end
 
   def find_user
-    @user ||= User.find(decoded_auth_token[:user_id])
+    @user ||= User.find(decoded_auth_token_user_id)
     Result.new(@user, true, false, nil)
   rescue ActiveRecord::RecordNotFound
     Result.new(nil, false, true, Message.invalid_token)
   end
 
-  def decoded_auth_token
-    @decoded_auth_token ||= Authentication::JsonWebToken.decode(http_auth_header)
-  end
+  def decoded_auth_token_user_id
+    result = Authentication::JsonWebToken.decode(http_auth_header)
+    return result[:user_id] if result.success?
+  
+    throw :authorize_error, Result.new(nil, false, true, result.failure_message)
+  end  
 
   def http_auth_header
     if headers['Authorization'].present?
