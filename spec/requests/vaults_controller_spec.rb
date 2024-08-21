@@ -8,7 +8,9 @@ RSpec.describe VaultsController, type: :request do
 
   describe '#create' do
     context 'when user is authenticated' do
-      before { post vaults_path, params: { vault: { name: 'Iconic vault', master_password: 'Favouritepassword123!' } }.to_json, headers: }
+      before do
+        post vaults_path, params: { vault: { name: 'Iconic vault', master_password: 'Favouritepassword123!' } }.to_json, headers:
+      end
 
       it 'creates a new vault' do
         expect(response).to have_http_status(:created)
