@@ -11,7 +11,7 @@ class VaultsController < ApplicationController
 
   def index
     @vaults = current_user.vaults
-    render json: VaultSerializer.new(@vaults).serializable_hash
+    render(json: VaultSerializer.new(@vaults).serializable_hash)
   end
 
   def show
