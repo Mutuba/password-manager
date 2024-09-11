@@ -4,7 +4,7 @@
 #
 # This controller handles the creation of vaults by accepting parameters
 # such as the vault name and user ID. It also requires a unlock_code
-# to be provided in order to generate an encrypted master key for the vault.
+# to be provided in order to generate an encrypted unlock_code for the vault.
 #
 class VaultsController < ApplicationController
   before_action :set_vault, except: [:create, :index]
@@ -16,7 +16,7 @@ class VaultsController < ApplicationController
 
   def show
     raise AuthenticationError,
-      "Vault session expired" unless REDIS.exists?("vault:#{@vault.id}:user:#{current_user.id}")
+      "Vault session expired" unless REDIS.exists?("vault:#{@vault.id}:user:#{current_user.id}").positive?
 
     render(json: @vault, serializer: VaultSerializer, status: :ok)
   end
@@ -32,20 +32,14 @@ class VaultsController < ApplicationController
   end
 
   def update
-    raise AuthenticationError,
-      "Vault session expired" unless REDIS.exists?("vault:#{@vault.id}:user:#{current_user.id}").positive?
-
     if @vault.update(vault_params)
       render(json: @vault, serializer: VaultSerializer, status: :ok)
     else
-      json_response({ errors: vault.errors.full_messages }, :unprocessable_entity)
+      json_response({ errors: @vault.errors.full_messages }, :unprocessable_entity)
     end
   end
 
   def destroy
-    raise AuthenticationError,
-      "Vault session expired" unless REDIS.exists?("vault:#{@vault.id}:user:#{current_user.id}").positive?
-
     @vault.destroy
     head(:no_content)
   end

@@ -21,14 +21,14 @@ class Vault < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :user_id }
   validates :unlock_code, :salt, presence: true
 
-  validate :unlock_code_strength
+  validate :unlock_code_strength, if: :unlock_code_changed?
 
-  before_save :encrypt_unlock_code, if: :unlock_code_changed?
+  before_save :encrypt_unlock_code, if: [:new_record?, :unlock_code_changed?]
 
-  before_validation :generate_salt
+  before_validation :generate_salt, if: :new_record?
 
   def generate_salt
-    self.salt ||= OpenSSL::Random.random_bytes(16)
+    self.salt = OpenSSL::Random.random_bytes(16)
   end
 
   def encrypt_unlock_code
