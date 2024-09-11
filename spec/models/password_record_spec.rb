@@ -29,8 +29,7 @@ RSpec.describe(PasswordRecord, type: :model) do
     let(:valid_password) { "FavouritePassword123!" }
     let(:user) { create(:user) }
     let(:vault) { build(:vault, user:, unlock_code: valid_password) }
-
-    let!(:existing_password_record) { create(:password_record, vault:) }
+    let!(:password_record) { create(:password_record, vault:) }
 
     it do
       should validate_uniqueness_of(:name).scoped_to(:vault_id)
