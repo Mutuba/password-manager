@@ -5,7 +5,6 @@ class ApplicationService
     def call(**params)
       new(**params).call
     end
-
-    private_class_method :new
   end
+  private_class_method :new
 end
