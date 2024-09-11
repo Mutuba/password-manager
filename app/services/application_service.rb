@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class ApplicationService
-  def self.call(**params)
-    new(**params).call
-  end
+  class << self
+    def call(**params)
+      new(**params).call
+    end
 
-  private_class_method :new
+    private_class_method :new
+  end
 end

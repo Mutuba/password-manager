@@ -22,6 +22,6 @@ class User < ApplicationRecord
   validates :username, uniqueness: true
 
   validates :password,
-            length: { minimum: 6 },
-            if: -> { new_record? || !password.nil? }
+    length: { minimum: 6 },
+    if: -> { new_record? || !password.nil? }
 end

@@ -5,6 +5,7 @@ class AuthenticateUserService < ApplicationService
   Result = Struct.new(:auth_token, :success?, :failure?)
 
   def initialize(username:, password:)
+    super()
     @username = username
     @password = password
   end

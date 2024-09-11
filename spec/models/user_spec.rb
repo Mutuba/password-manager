@@ -11,19 +11,19 @@
 #  updated_at      :datetime         not null
 #  email           :string
 #
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe User, type: :model do
-  describe 'associations' do
-    it { should have_many :vaults }
+RSpec.describe(User, type: :model) do
+  describe "associations" do
+    it { should have_many(:vaults) }
   end
 
-  describe 'column validations' do
-    it { should have_db_column(:username).of_type :string }
-    it { should have_db_column(:password_digest).of_type :string }
+  describe "column validations" do
+    it { should have_db_column(:username).of_type(:string) }
+    it { should have_db_column(:password_digest).of_type(:string) }
   end
 
-  describe 'validations' do
+  describe "validations" do
     subject { build(:user) }
     it { should validate_presence_of(:password) }
     it { should validate_presence_of(:username) }

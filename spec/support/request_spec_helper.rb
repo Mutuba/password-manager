@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # spec/support/request_spec_helper
-require 'json'
+require "json"
 
 module RequestSpecHelper
   # Parse JSON response to ruby hash
@@ -22,24 +22,24 @@ module RequestSpecHelper
   # return valid headers
   def valid_headers(user_id)
     {
-      'Authorization' => token_generator(user_id),
-      'Content-Type' => 'application/json'
+      "Authorization" => token_generator(user_id),
+      "Content-Type" => "application/json",
     }
   end
 
   # return expired headers
   def expired_headers(user_id)
     {
-      'Authorization' => expired_token_generator(user_id),
-      'Content-Type' => 'application/json'
+      "Authorization" => expired_token_generator(user_id),
+      "Content-Type" => "application/json",
     }
   end
 
   # return invalid headers
   def invalid_headers
     {
-      'Authorization' => nil,
-      'Content-Type' => 'application/json'
+      "Authorization" => nil,
+      "Content-Type" => "application/json",
     }
   end
 end

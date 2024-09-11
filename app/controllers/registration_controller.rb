@@ -19,7 +19,7 @@ class RegistrationController < ApplicationController
     params.require(:user).permit(
       :username,
       :email,
-      :password
+      :password,
     )
   end
 end

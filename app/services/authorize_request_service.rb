@@ -23,7 +23,7 @@ class AuthorizeRequestService < ApplicationService
     user = find_user
     return user if user.success?
 
-    throw :authorize_error, user
+    throw(:authorize_error, user)
   end
 
   def find_user
@@ -36,15 +36,15 @@ class AuthorizeRequestService < ApplicationService
   def decoded_auth_token_user_id
     result = Authentication::JsonWebToken.decode(http_auth_header)
     return result[:user_id] if result.success?
-  
-    throw :authorize_error, Result.new(nil, false, true, result.failure_message)
-  end  
+
+    throw(:authorize_error, Result.new(nil, false, true, result.failure_message))
+  end
 
   def http_auth_header
-    if headers['Authorization'].present?
-      headers['Authorization'].split(' ').last
+    if headers["Authorization"].present?
+      headers["Authorization"].split(" ").last
     else
-      throw :authorize_error, Result.new(nil, false, true, Message.missing_headers)
+      throw(:authorize_error, Result.new(nil, false, true, Message.missing_headers))
     end
   end
 end

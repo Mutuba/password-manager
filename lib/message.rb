@@ -2,39 +2,41 @@
 
 # lib/message.rb
 class Message
-  def self.not_found(record = 'record')
-    "Sorry, #{record} not found."
-  end
+  class << self
+    def not_found(record = "record")
+      "Sorry, #{record} not found."
+    end
 
-  def self.invalid_credentials
-    'Invalid credentials'
-  end
+    def invalid_credentials
+      "Invalid credentials"
+    end
 
-  def self.invalid_token
-    'Invalid token'
-  end
+    def invalid_token
+      "Invalid token"
+    end
 
-  def self.missing_token
-    'Missing token'
-  end
+    def missing_token
+      "Missing token"
+    end
 
-  def self.unauthorized
-    'Unauthorized request'
-  end
+    def unauthorized
+      "Unauthorized request"
+    end
 
-  def self.expired_token
-    'Signature has expired'
-  end
+    def expired_token
+      "Signature has expired"
+    end
 
-  def self.account_created
-    'Account created successfully'
-  end
+    def account_created
+      "Account created successfully"
+    end
 
-  def self.account_not_created
-    'Account could not be created'
-  end
+    def account_not_created
+      "Account could not be created"
+    end
 
-  def self.missing_headers
-    'Missing authorization header'
+    def missing_headers
+      "Missing authorization header"
+    end
   end
 end
