@@ -20,7 +20,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_11_065918) do
     t.bigint("vault_id", null: false)
     t.string("name", null: false)
     t.string("username", null: false)
-    t.string("encrypted_password", null: false)
+    t.string("password", null: false)
     t.datetime("created_at", null: false)
     t.datetime("updated_at", null: false)
     t.index(["name", "vault_id"], name: "index_password_records_on_name_and_vault_id", unique: true)

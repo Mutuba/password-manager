@@ -16,5 +16,11 @@ FactoryBot.define do
   factory :vault do
     name { Faker::Name.name }
     association :user, factory: :user
+
+    trait :with_password_records do
+      after(:create) do |vault|
+        create_list :password_record, 2, vault: vault
+      end
+    end
   end
 end

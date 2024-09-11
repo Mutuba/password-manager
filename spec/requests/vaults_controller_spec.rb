@@ -16,7 +16,7 @@ RSpec.describe(VaultsController, type: :request) do
 
       it "creates a new vault" do
         expect(response).to(have_http_status(:created))
-        expect(json_response["data"]["attributes"]["name"]).to(eq("Iconic vault"))
+        expect(json_response["name"]).to(eq("Iconic vault"))
       end
     end
 
@@ -40,6 +40,66 @@ RSpec.describe(VaultsController, type: :request) do
       it "raises validation error" do
         expect(response).to(have_http_status(:unprocessable_entity))
         expect(json_response["errors"]).to(include("Unlock code is weak"))
+      end
+    end
+  end
+
+  describe "#show" do
+    let(:valid_password) { "FavouritePassword123!" }
+    let!(:vault) do
+      create(:vault, :with_password_records, name: "Special Vault", user: user, unlock_code: valid_password)
+    end
+    context "when authenticated" do
+      context "when active session" do
+        before do
+          allow(REDIS).to(receive(:exists?).with(any_args).and_return(1))
+          get vault_path(vault.id), headers:
+        end
+        it "returns the vault" do
+          expect(response).to(have_http_status(:ok))
+          expect(json_response["name"]).to(eq("Special Vault"))
+        end
+      end
+
+      context "when session is expired" do
+        before do
+          get vault_path(vault.id), headers:
+        end
+
+        it "returns expired session error" do
+          expect(response).to(have_http_status(:unauthorized))
+          expect(json_response["error"]).to(eq("Vault session expired"))
+        end
+      end
+    end
+
+    context "when not authenticated" do
+      before do
+        get vault_path(vault.id)
+        it "raises authentication error" do
+          expect(response).to(have_http_status(:unauthorized))
+          expect(json_response["error"]).to(eq("Missing authorization header"))
+        end
+      end
+    end
+  end
+
+  describe "#update" do
+    context "when authenticated" do
+      context "when active session" do
+      end
+
+      context "when session is expired" do
+      end
+    end
+
+    context "when not authenticated" do
+      before do
+        put vault_path(vault.id), params: { vault: { name: "Updated vault name" } }.to_json
+        it "raises authentication error" do
+          expect(response).to(have_http_status(:unauthorized))
+          expect(json_response["error"]).to(eq("Missing authorization header"))
+        end
       end
     end
   end

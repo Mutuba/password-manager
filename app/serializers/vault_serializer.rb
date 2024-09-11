@@ -12,7 +12,7 @@
 #  unlock_code :text             not null
 #  salt        :binary           not null
 #
-class VaultSerializer
-  include JSONAPI::Serializer
+class VaultSerializer < ActiveModel::Serializer
   attributes :name, :created_at, :updated_at
+  has_many :password_records
 end
