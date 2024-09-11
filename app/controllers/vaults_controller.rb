@@ -11,21 +11,21 @@ class VaultsController < ApplicationController
 
   def index
     @vaults = current_user.vaults
-    render(json: @vaults, each_serializer: VaultsController, status: :ok)
+    render json: VaultSerializer.new(@vaults).serializable_hash
   end
 
   def show
     raise AuthenticationError,
-      "Vault session expired" unless REDIS.exists?("vault:#{@vault.id}:user:#{current_user.id}").positive?
+      "Vault session expired" unless REDIS.exists?("vault:#{@vault.id}:user:#{current_user.id}")
 
-    render(json: @vault, serializer: VaultSerializer, status: :ok)
+    render(json: VaultSerializer.new(@vault, include: [:password_records]).serializable_hash, status: :ok)
   end
 
   def create
     vault = current_user.vaults.new(vault_params)
 
     if vault.save
-      render(json: vault, serializer: VaultSerializer, status: :created)
+      render(json: VaultSerializer.new(vault).serializable_hash, status: :created)
     else
       json_response({ errors: vault.errors.full_messages }, :unprocessable_entity)
     end
@@ -33,7 +33,7 @@ class VaultsController < ApplicationController
 
   def update
     if @vault.update(vault_params)
-      render(json: @vault, serializer: VaultSerializer, status: :ok)
+      render(json: VaultSerializer.new(@vault).serializable_hash, status: :ok)
     else
       json_response({ errors: @vault.errors.full_messages }, :unprocessable_entity)
     end
@@ -59,7 +59,7 @@ class VaultsController < ApplicationController
   def logout
     session_key = "vault:#{@vault.id}:user:#{current_user.id}"
 
-    if REDIS.exists?(session_key).positive?
+    if REDIS.exists?(session_key)
       REDIS.del(session_key)
       render(json: { message: "Logout successful" }, status: :ok)
     else

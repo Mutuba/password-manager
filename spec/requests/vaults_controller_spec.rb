@@ -16,7 +16,7 @@ RSpec.describe(VaultsController, type: :request) do
 
       it "creates a new vault" do
         expect(response).to(have_http_status(:created))
-        expect(json_response["name"]).to(eq("Iconic vault"))
+        expect(json_response["data"]["attributes"]["name"]).to(eq("Iconic vault"))
       end
     end
 
@@ -52,18 +52,18 @@ RSpec.describe(VaultsController, type: :request) do
     context "when authenticated" do
       context "when active session" do
         before do
-          allow(REDIS).to(receive(:exists?).with(any_args).and_return(1))
+          allow(REDIS).to(receive(:exists?).with(any_args).and_return(true))
           get vault_path(vault.id), headers:
         end
         it "returns the vault" do
           expect(response).to(have_http_status(:ok))
-          expect(json_response["name"]).to(eq("Special Vault"))
+          expect(json_response["data"]["attributes"]["name"]).to(eq("Special Vault"))
         end
       end
 
       context "when session is expired" do
         before do
-          allow(REDIS).to(receive(:exists?).with(any_args).and_return(0))
+          allow(REDIS).to(receive(:exists?).with(any_args).and_return(false))
           get vault_path(vault.id), headers:
         end
 
@@ -97,7 +97,7 @@ RSpec.describe(VaultsController, type: :request) do
 
       it "updates the vault" do
         expect(response).to(have_http_status(:ok))
-        expect(json_response["name"]).to(eq("Updated vault name"))
+        expect(json_response["data"]["attributes"]["name"]).to(eq("Updated vault name"))
       end
     end
 
@@ -179,7 +179,7 @@ RSpec.describe(VaultsController, type: :request) do
 
     context "when there is a vault session" do
       before do
-        allow(REDIS).to(receive(:exists?).with(any_args).and_return(1))
+        allow(REDIS).to(receive(:exists?).with(any_args).and_return(true))
         post vault_logout_path(vault.id), headers:
       end
 
@@ -191,7 +191,7 @@ RSpec.describe(VaultsController, type: :request) do
 
     context "when there is no session" do
       before do
-        allow(REDIS).to(receive(:exists?).with(any_args).and_return(0))
+        allow(REDIS).to(receive(:exists?).with(any_args).and_return(false))
         post vault_logout_path(vault.id), headers:
       end
 
