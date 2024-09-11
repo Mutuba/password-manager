@@ -87,9 +87,27 @@ RSpec.describe(VaultsController, type: :request) do
   describe "#update" do
     context "when authenticated" do
       context "when active session" do
+        before do
+          allow(REDIS).to(receive(:exists?).with(any_args).and_return(1))
+          put vault_path(vault.id), params: { vault: { name: "Updated vault name" } }.to_json, headers: headers
+
+          it "updates the vault" do
+            expect(response).to(have_http_status(:ok))
+            expect(json_response["name"]).to(eq("Updated vault name"))
+          end
+        end
       end
 
-      context "when session is expired" do
+      context "when session has expired" do
+        before do
+          allow(REDIS).to(receive(:exists?).with(any_args).and_return(0))
+          put vault_path(vault.id), params: { vault: { name: "Expired vault name" } }.to_json, headers: headers
+
+          it "returns expired session error" do
+            expect(response).to(have_http_status(:unauthorized))
+            expect(json_response["errors"]).to(eq("Vault session expired"))
+          end
+        end
       end
     end
 
