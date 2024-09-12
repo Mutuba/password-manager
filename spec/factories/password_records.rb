@@ -17,6 +17,6 @@ FactoryBot.define do
     association :vault, factory: :vault
     name { Faker::Name.name }
     username { Faker::Internet.username }
-    password { Faker::Alphanumeric.alpha(number: 10) }
+    password { Faker::Internet.password(min_length: 10, max_length: 16, mix_case: true, special_characters: true) }
   end
 end

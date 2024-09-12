@@ -52,16 +52,25 @@ class Vault < ApplicationRecord
   private
 
   def unlock_code_strength
-    return if unlock_code.present? &&
-      unlock_code.length >= 8 &&
-      unlock_code.count("a-zA-Z") > 0 &&
-      unlock_code.count("0-9") > 0 &&
-      unlock_code.count("!@#$%^&*") > 0
+    return if unlock_code.blank?
 
-    errors.add(
-      :unlock_code,
-      "is weak",
-    )
+    if unlock_code.length < 8
+      errors.add(:unlock_code, "must be at least 8 characters long")
+      return
+    end
+
+    unless unlock_code.chars.any? { |char| ("a".."z").include?(char.downcase) }
+      errors.add(:unlock_code, "must contain at least one letter")
+    end
+
+    unless unlock_code.chars.any? { |char| ("0".."9").include?(char) }
+      errors.add(:unlock_code, "must contain at least one digit")
+    end
+
+    special_characters = "!@#$%^&*"
+    unless unlock_code.chars.any? { |char| special_characters.include?(char) }
+      errors.add(:unlock_code, "must contain at least one special character")
+    end
   end
 
   def derive_key_from_unlock_code(unlock_code, salt, iterations = 20_000, length = 32)

@@ -12,7 +12,13 @@ RSpec.describe(PasswordRecordsController, type: :request) do
       context "with correct params" do
         before do
           post vault_password_records_path(vault.id),
-            params: { password_record: { name: "First record", username: "Pearl Mutuba", password: "Baraka" } }.to_json,
+            params: {
+              password_record: {
+                name: "First record",
+                username: "Pearl Mutuba",
+                password: "QPFJWz1343439",
+              },
+            }.to_json,
             headers: headers
         end
 
@@ -39,7 +45,13 @@ RSpec.describe(PasswordRecordsController, type: :request) do
     context "when user is not authenticated" do
       before do
         post vault_password_records_path(vault.id),
-          params: { password_record: { name: "First record", username: "Pearl Mutuba", password: "Baraka" } }.to_json
+          params: {
+            password_record: {
+              name: "First record",
+              username: "Pearl Mutuba",
+              password: "QPFJWz1343439",
+            },
+          }.to_json
       end
 
       it "raises authentication error" do
@@ -55,13 +67,13 @@ RSpec.describe(PasswordRecordsController, type: :request) do
       context "with correct params" do
         before do
           put password_record_path(password_record.id),
-            params: { password_record: { password: "New Password" } }.to_json,
+            params: { password_record: { password: "QPFJWz13434398" } }.to_json,
             headers: headers
         end
 
         it " creates a new password record" do
           expect(response).to(have_http_status(:ok))
-          expect(json_response["data"]["attributes"]["password"]).to(eq("New Password"))
+          expect(json_response["data"]["attributes"]["password"]).to(eq("QPFJWz13434398"))
         end
       end
 

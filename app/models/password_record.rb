@@ -16,5 +16,6 @@ class PasswordRecord < ApplicationRecord
   belongs_to :vault
 
   validates :username, :password, presence: true
+  validates :password, presence: true, password: true, length: { in: 10..16 }
   validates :name, presence: true, uniqueness: { scope: :vault_id }
 end
