@@ -16,6 +16,7 @@ FactoryBot.define do
   factory :vault do
     name { Faker::Name.name }
     association :user, factory: :user
+    unlock_code { Faker::Internet.password(min_length: 10, max_length: 16, mix_case: true, special_characters: true) }
 
     trait :with_password_records do
       after(:create) do |vault|

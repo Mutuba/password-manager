@@ -7,10 +7,10 @@ Rails.application.routes.draw do
   post "/auth/login", to: "authentication#login", as: :login
 
   resources :vaults do
-    resources :password_records, only: [:create, :index]
+    resources :password_records, only: [:create]
   end
 
-  resources :password_records, only: [:update, :show, :destroy]
+  resources :password_records, only: [:update, :destroy]
 
   post "vaults/:id/login", to: "vaults#login", as: :vault_login
   post "vaults/:id/logout", to: "vaults#logout", as: :vault_logout

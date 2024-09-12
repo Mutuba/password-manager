@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
 class PasswordRecordsController < ApplicationController
-  before_action :set_vault, only: [:index, :create]
-  before_action :set_password_record, only: [:show, :update, :destroy]
-
-  def index
-  end
+  before_action :set_vault, only: [:create]
+  before_action :set_password_record, only: [:update, :destroy]
 
   def create
+    @password_record = @vault.password_records.new(password_record_params)
+    if @password_record.save
+      render(json: PasswordRecordSerializer.new(@password_record).serializable_hash, status: :created)
+    else
+      render(json: @password_record.errors.full_messages, status: :unprocessable_entity)
+    end
   end
 
   def update
-  end
-
-  def show
   end
 
   def destroy
