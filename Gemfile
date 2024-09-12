@@ -12,7 +12,6 @@ gem "bcrypt", "~> 3.1.7"
 gem "jwt"
 gem "pg", "~> 1.1"
 
-# gem "active_model_serializers", "~> 0.10.12"
 gem "jsonapi-serializer"
 gem "rack-cors"
 
