@@ -7,16 +7,31 @@ class PasswordRecordsController < ApplicationController
   def create
     @password_record = @vault.password_records.new(password_record_params)
     if @password_record.save
-      render(json: PasswordRecordSerializer.new(@password_record).serializable_hash, status: :created)
+      render(
+        json: PasswordRecordSerializer.new(@password_record).serializable_hash, status: :created,
+      )
     else
-      render(json: @password_record.errors.full_messages, status: :unprocessable_entity)
+      json_response(
+        { errors: @password_record.errors.full_messages }, :unprocessable_entity
+      )
     end
   end
 
   def update
+    if @password_record.update(password_record_params)
+      render(
+        json: PasswordRecordSerializer.new(@password_record).serializable_hash, status: :ok,
+      )
+    else
+      json_response(
+        { errors: @password_record.errors.full_messages }, :unprocessable_entity
+      )
+    end
   end
 
   def destroy
+    @password_record.destroy
+    head(:no_content)
   end
 
   private
