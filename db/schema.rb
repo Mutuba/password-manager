@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_13_080036) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_13_115446) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -46,6 +46,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_13_080036) do
     t.datetime("updated_at", null: false)
     t.text("unlock_code", null: false)
     t.binary("salt", null: false)
+    t.text("description")
+    t.datetime("last_accessed_at")
+    t.integer("vault_type", default: 0, null: false)
+    t.integer("status", default: 0, null: false)
+    t.integer("access_count", default: 0, null: false)
+    t.boolean("is_shared", default: false)
+    t.jsonb("shared_with", default: [])
+    t.datetime("expiration_date")
+    t.text("encrypted_metadata")
+    t.integer("failed_attempts", default: 0)
+    t.string("unlock_code_hint")
     t.index(["name", "user_id"], name: "index_vaults_on_name_and_user_id", unique: true)
     t.index(["user_id"], name: "index_vaults_on_user_id")
   end

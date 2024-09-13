@@ -44,6 +44,7 @@ class VaultsController < ApplicationController
       hashed_value = Digest::SHA256.hexdigest("authenticated#{current_user.id}")
 
       REDIS.setex(session_key, 10.minutes, hashed_value)
+      @vault.update(last_accessed_at: Time.current)
       render(json: { message: "Login successful" }, status: :ok)
     else
       render(json: { error: "Invalid password" }, status: :unauthorized)
@@ -64,7 +65,15 @@ class VaultsController < ApplicationController
   private
 
   def vault_params
-    params.require(:vault).permit(:name, :unlock_code)
+    params.require(:vault).permit(
+      :name,
+      :unlock_code,
+      :description,
+      :vault_type,
+      :shared_with,
+      :status,
+      :is_shared,
+    )
   end
 
   def set_vault

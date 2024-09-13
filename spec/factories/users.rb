@@ -10,6 +10,8 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  email           :string
+#  first_name      :string           default(""), not null
+#  last_name       :string           default(""), not null
 #
 FactoryBot.define do
   factory :user do
