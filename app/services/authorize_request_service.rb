@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# app/services/authorize_request_service.rb
 class AuthorizeRequestService < ApplicationService
   Result = Struct.new(:user, :success?, :failure?, :failure_message)
 

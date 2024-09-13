@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# app/controllers/users_controller.rb
 class RegistrationController < ApplicationController
   skip_before_action :authorize_request, only: :sign_up
 

@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-# VaultsController is responsible for managing the creation of Vaults.
-#
-# This controller handles the creation of vaults by accepting parameters
-# such as the vault name and user ID. It also requires a unlock_code
-# to be provided in order to generate an encrypted unlock_code for the vault.
-#
 class VaultsController < ApplicationController
   before_action :set_vault, except: [:create, :index]
 

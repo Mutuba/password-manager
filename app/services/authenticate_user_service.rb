@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# app/services/authenticate_user_service.rb
 class AuthenticateUserService < ApplicationService
   SuccessStruct = Struct.new(:auth_token, :user) do
     def success?
