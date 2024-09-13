@@ -9,7 +9,6 @@ RSpec.describe(AuthenticateUserService) do
     context "when a user exists" do
       it "should return a user token" do
         result = AuthenticateUserService.call(username: user.username, password: user.password)
-
         expect(result[:auth_token]).not_to(be_nil)
         expect(result.success?).to(eq(true))
       end
@@ -21,7 +20,6 @@ RSpec.describe(AuthenticateUserService) do
 
         expect(result.auth_token).to(be_nil)
         expect(result.success?).to(eq(false))
-        expect(result.failure?).to(eq(true))
       end
     end
   end

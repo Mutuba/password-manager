@@ -8,7 +8,7 @@ class AuthenticationController < ApplicationController
     result = AuthenticateUserService.call(username: login_params[:username], password: login_params[:password])
     raise AuthenticationError, Message.invalid_credentials unless result.success?
 
-    json_response(auth_token: result.auth_token)
+    json_response(auth_token: result.auth_token, username: result[:username])
   end
 
   private
