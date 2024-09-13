@@ -9,7 +9,7 @@ class RegistrationController < ApplicationController
     result = AuthenticateUserService.call(username: user.username, password: user.password)
     raise AuthenticationError, Message.invalid_credentials unless result.success?
 
-    response = { auth_token: result[:auth_token], username: result[:username] }
+    response = { auth_token: result[:auth_token], user: result[:user] }
     json_response(response, :created)
   end
 

@@ -39,7 +39,7 @@ RSpec.describe(VaultsController, type: :request) do
 
       it "raises validation error" do
         expect(response).to(have_http_status(:unprocessable_entity))
-        expect(json_response["errors"]).not_to be_empty
+        expect(json_response["errors"]).not_to(be_empty)
       end
     end
   end

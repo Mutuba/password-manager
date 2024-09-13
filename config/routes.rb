@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   post "/auth/sign_up", to: "registration#sign_up", as: :sign_up
   post "/auth/login", to: "authentication#login", as: :login
+  get "/auth/session", to: "authentication#session", as: :session
 
   resources :vaults do
     resources :password_records, only: [:create]

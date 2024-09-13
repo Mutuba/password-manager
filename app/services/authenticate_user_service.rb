@@ -2,7 +2,7 @@
 
 # app/services/authenticate_user_service.rb
 class AuthenticateUserService < ApplicationService
-  SuccessStruct = Struct.new(:auth_token, :username) do
+  SuccessStruct = Struct.new(:auth_token, :user) do
     def success?
       true
     end
@@ -23,7 +23,10 @@ class AuthenticateUserService < ApplicationService
   def call
     if authenticate_user
       auth_token = Authentication::JsonWebToken.encode(user_id: @user.id)
-      SuccessStruct.new(auth_token, username)
+      SuccessStruct.new(
+        auth_token,
+        { username: @user.username, first_name: @user.first_name, last_name: @user.last_name },
+      )
     else
       FailureStruct.new(nil)
     end
