@@ -4,13 +4,17 @@
 #
 # Table name: password_records
 #
-#  id         :bigint           not null, primary key
-#  vault_id   :bigint           not null
-#  name       :string           not null
-#  username   :string           not null
-#  password   :string           not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id           :bigint           not null, primary key
+#  vault_id     :bigint           not null
+#  name         :string           not null
+#  username     :string           not null
+#  password     :string           not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  notes        :text
+#  url          :string
+#  last_used_at :datetime
+#  expired_at   :datetime
 #
 FactoryBot.define do
   factory :password_record do

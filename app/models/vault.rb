@@ -13,8 +13,8 @@
 #  salt               :binary           not null
 #  description        :text
 #  last_accessed_at   :datetime
-#  vault_type         :integer          default(0), not null
-#  status             :integer          default(0), not null
+#  vault_type         :integer          default("personal"), not null
+#  status             :integer          default("active"), not null
 #  access_count       :integer          default(0), not null
 #  is_shared          :boolean          default(FALSE)
 #  shared_with        :jsonb
@@ -26,19 +26,11 @@
 require "openssl"
 
 class Vault < ApplicationRecord
-  enum status: {
-    active: 0,
-    archived: 1,
-    deleted: 2,
-    locked: 3,
-  }
+  include UnlockCodeValidation
+  include KeyDerivable
 
-  enum vault_type: {
-    personal: 0,
-    business: 1,
-    shared: 2,
-    temporary: 3,
-  }
+  enum status: { active: 0, archived: 1, deleted: 2, locked: 3 }
+  enum vault_type: { personal: 0, business: 1, shared: 2, temporary: 3 }
 
   belongs_to :user
   has_many :password_records
@@ -46,10 +38,7 @@ class Vault < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :user_id }
   validates :unlock_code, :salt, presence: true
 
-  validate :unlock_code_strength, if: :unlock_code_changed?
-
   before_save :encrypt_unlock_code, if: [:new_record?, :unlock_code_changed?]
-
   before_validation :generate_salt, if: :new_record?
 
   def generate_salt
@@ -57,49 +46,25 @@ class Vault < ApplicationRecord
   end
 
   def encrypt_unlock_code
-    master_key = derive_key_from_unlock_code(unlock_code, salt)
+    master_key = derive_key_from_input(unlock_code, salt)
     self.unlock_code = EncryptionService.encrypt_data(data: master_key, encryption_key: KEK)
   end
 
   def authenticate_vault(vault_password)
-    derived_key = derive_key_from_unlock_code(vault_password, salt)
+    derived_key = derive_key_from_input(vault_password, salt)
 
-    decrypted_master_key = EncryptionService.decrypt_data(
-      encrypted_data: unlock_code,
-      encryption_key: KEK,
-    )
+    decrypted_master_key = derive_vault_master_key
 
     ActiveSupport::SecurityUtils.secure_compare(derived_key, decrypted_master_key)
   rescue OpenSSL::Cipher::CipherError
     false
   end
 
-  private
-
-  def unlock_code_strength
-    return if unlock_code.blank?
-
-    if unlock_code.length < 8
-      errors.add(:unlock_code, "must be at least 8 characters long")
-      return
-    end
-
-    unless unlock_code.chars.any? { |char| ("a".."z").include?(char.downcase) }
-      errors.add(:unlock_code, "must contain at least one letter")
-    end
-
-    unless unlock_code.chars.any? { |char| ("0".."9").include?(char) }
-      errors.add(:unlock_code, "must contain at least one digit")
-    end
-
-    special_characters = "!@#$%^&*"
-    unless unlock_code.chars.any? { |char| special_characters.include?(char) }
-      errors.add(:unlock_code, "must contain at least one special character")
-    end
-  end
-
-  def derive_key_from_unlock_code(unlock_code, salt, iterations = 20_000, length = 32)
-    OpenSSL::PKCS5.pbkdf2_hmac(unlock_code.to_s, salt, iterations, length, "sha256")
+  def derive_vault_master_key
+    EncryptionService.decrypt_data(
+      encrypted_data: unlock_code,
+      encryption_key: KEK,
+    )
   end
 
   alias_method :owner, :user

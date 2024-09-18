@@ -8,10 +8,10 @@ Rails.application.routes.draw do
   get "/auth/session", to: "authentication#session", as: :session
 
   resources :vaults do
-    resources :password_records, only: [:create]
+    resources :password_records, only: [:create, :update]
   end
 
-  resources :password_records, only: [:update, :destroy]
+  resources :password_records, only: [:destroy]
 
   post "vaults/:id/login", to: "vaults#login", as: :vault_login
   post "vaults/:id/logout", to: "vaults#logout", as: :vault_logout

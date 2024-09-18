@@ -13,8 +13,8 @@
 #  salt               :binary           not null
 #  description        :text
 #  last_accessed_at   :datetime
-#  vault_type         :integer          default(0), not null
-#  status             :integer          default(0), not null
+#  vault_type         :integer          default("personal"), not null
+#  status             :integer          default("active"), not null
 #  access_count       :integer          default(0), not null
 #  is_shared          :boolean          default(FALSE)
 #  shared_with        :jsonb

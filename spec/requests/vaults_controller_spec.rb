@@ -47,7 +47,7 @@ RSpec.describe(VaultsController, type: :request) do
   describe "#show" do
     let(:valid_password) { "FavouritePassword123!" }
     let!(:vault) do
-      create(:vault, :with_password_records, name: "Special Vault", user: user, unlock_code: valid_password)
+      create(:vault, name: "Special Vault", user: user, unlock_code: valid_password)
     end
     context "when authenticated" do
       context "when active session" do
