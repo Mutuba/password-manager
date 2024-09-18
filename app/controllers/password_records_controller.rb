@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class PasswordRecordsController < ApplicationController
-  before_action :set_vault, only: %i[create update]
-  before_action :set_password_record, only: %i[update destroy]
-  before_action :validate_vault_password, only: %i[create update]
+  before_action :set_vault, only: [:create, :update]
+  before_action :set_password_record, only: [:update, :destroy]
+  before_action :validate_vault_password, only: [:create, :update]
 
   def create
     @password_record = @vault.password_records.new(password_record_params)
@@ -26,7 +26,7 @@ class PasswordRecordsController < ApplicationController
 
   def destroy
     if @password_record.destroy
-      head :no_content
+      head(:no_content)
     else
       render_errors(@password_record.errors.full_messages, :unprocessable_entity)
     end
@@ -43,7 +43,7 @@ class PasswordRecordsController < ApplicationController
   end
 
   def password_record_params
-    params.require(:password_record).permit(:name, :username, :password)
+    params.require(:password_record).permit(:name, :username, :notes, :url, :password)
   end
 
   def validate_vault_password
@@ -56,10 +56,10 @@ class PasswordRecordsController < ApplicationController
   end
 
   def render_serialized_record(record, status)
-    render json: PasswordRecordSerializer.new(record).serializable_hash, status: status
+    render(json: PasswordRecordSerializer.new(record).serializable_hash, status: status)
   end
 
   def render_errors(errors, status)
-    render json: { errors: errors }, status: status
+    render(json: { errors: errors }, status: status)
   end
 end

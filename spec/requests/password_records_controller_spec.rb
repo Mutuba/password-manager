@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe PasswordRecordsController, type: :request do
+RSpec.describe(PasswordRecordsController, type: :request) do
   let(:user) { create(:user) }
   let(:headers) { valid_headers(user.id) }
   let(:vault_password) { "FavouritePassword123!*" }
@@ -40,8 +40,8 @@ RSpec.describe PasswordRecordsController, type: :request do
         end
 
         it "creates a new password record" do
-          expect(response).to have_http_status(:created)
-          expect(json_response["data"]["attributes"]["name"]).to eq("First record")
+          expect(response).to(have_http_status(:created))
+          expect(json_response["data"]["attributes"]["name"]).to(eq("First record"))
         end
       end
 
@@ -56,8 +56,8 @@ RSpec.describe PasswordRecordsController, type: :request do
         end
 
         it "raises errors" do
-          expect(response).to have_http_status(:unprocessable_entity)
-          expect(json_response["errors"]).to include("Password can't be blank")
+          expect(response).to(have_http_status(:unprocessable_entity))
+          expect(json_response["errors"]).to(include("Password can't be blank"))
         end
       end
     end
@@ -76,7 +76,7 @@ RSpec.describe PasswordRecordsController, type: :request do
       end
 
       it "raises authentication error" do
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to(have_http_status(:unauthorized))
       end
     end
   end
@@ -95,7 +95,7 @@ RSpec.describe PasswordRecordsController, type: :request do
       end
 
       it "updates the password record" do
-        expect(response).to have_http_status(:ok)
+        expect(response).to(have_http_status(:ok))
       end
     end
 
@@ -107,8 +107,8 @@ RSpec.describe PasswordRecordsController, type: :request do
       end
 
       it "raises errors" do
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(json_response["errors"]).to include("Username can't be blank")
+        expect(response).to(have_http_status(:unprocessable_entity))
+        expect(json_response["errors"]).to(include("Username can't be blank"))
       end
     end
 
@@ -124,7 +124,7 @@ RSpec.describe PasswordRecordsController, type: :request do
       end
 
       it "raises authentication error" do
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to(have_http_status(:unauthorized))
       end
     end
   end
@@ -138,7 +138,7 @@ RSpec.describe PasswordRecordsController, type: :request do
       end
 
       it "deletes the password record" do
-        expect(response).to have_http_status(:no_content)
+        expect(response).to(have_http_status(:no_content))
       end
     end
 
@@ -148,7 +148,7 @@ RSpec.describe PasswordRecordsController, type: :request do
       end
 
       it "raises authentication error" do
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to(have_http_status(:unauthorized))
       end
     end
   end
