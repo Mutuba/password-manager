@@ -38,7 +38,7 @@ class Vault < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :user_id }
   validates :unlock_code, :salt, presence: true
 
-  before_save :encrypt_unlock_code, if: [:new_record?, :unlock_code_changed?]
+  before_save :encrypt_unlock_code, if: :unlock_code_changed_and_its_new_record?
   before_validation :generate_salt, if: :new_record?
 
   def generate_salt
@@ -48,6 +48,10 @@ class Vault < ApplicationRecord
   def encrypt_unlock_code
     master_key = derive_key_from_input(unlock_code, salt)
     self.unlock_code = EncryptionService.encrypt_data(data: master_key, encryption_key: KEK)
+  end
+
+  def unlock_code_changed_and_its_new_record?
+    unlock_code_changed? || new_record?
   end
 
   def authenticate_vault(vault_password)

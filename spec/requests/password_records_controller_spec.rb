@@ -7,21 +7,7 @@ RSpec.describe(PasswordRecordsController, type: :request) do
   let(:headers) { valid_headers(user.id) }
   let(:vault_password) { "FavouritePassword123!*" }
   let(:vault) { create(:vault, user: user, unlock_code: vault_password) }
-  let(:password_record) { build(:password_record, vault: vault) }
-
-  shared_context "with authenticated user and encryption setup" do
-    before do
-      password_record.encryption_key(vault_password)
-      password_record.save!
-    end
-  end
-
-  shared_context "with unauthenticated user" do
-    before do
-      password_record.encryption_key(vault_password)
-      password_record.save!
-    end
-  end
+  let(:password_record) { create(:password_record, vault: vault) }
 
   describe "#create" do
     context "when user is authenticated" do
@@ -82,8 +68,6 @@ RSpec.describe(PasswordRecordsController, type: :request) do
   end
 
   describe "#update" do
-    include_context "with authenticated user and encryption setup"
-
     context "with correct params" do
       before do
         put vault_password_record_path(vault.id, password_record.id),
@@ -113,8 +97,6 @@ RSpec.describe(PasswordRecordsController, type: :request) do
     end
 
     context "when user is not authenticated" do
-      include_context "with unauthenticated user"
-
       before do
         put vault_password_record_path(vault.id, password_record.id),
           params: {
@@ -130,8 +112,6 @@ RSpec.describe(PasswordRecordsController, type: :request) do
   end
 
   describe "#destroy" do
-    include_context "with authenticated user and encryption setup"
-
     context "when user is authenticated" do
       before do
         delete password_record_path(password_record.id), headers: headers

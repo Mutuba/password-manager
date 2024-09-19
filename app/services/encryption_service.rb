@@ -17,6 +17,8 @@ class EncryptionService
       cipher = initialize_cipher(:encrypt, encryption_key)
 
       isolation_vector = cipher.random_iv
+      raise "IV must be 12 bytes" if isolation_vector.bytesize < 12
+
       encrypted_data = cipher.update(data) + cipher.final
       auth_tag = cipher.auth_tag
 
@@ -37,6 +39,9 @@ class EncryptionService
     # @raise [OpenSSL::Cipher::CipherError] if decryption fails (e.g., if data was tampered with).
     def decrypt_data(encrypted_data:, encryption_key:)
       isolation_vector, encrypted, auth_tag = decode_encrypted_data(encrypted_data)
+
+      raise "IV must be 12 bytes" if isolation_vector.bytesize < 12
+
       cipher = initialize_cipher(:decrypt, encryption_key, isolation_vector, auth_tag)
 
       cipher.update(encrypted) + cipher.final

@@ -19,5 +19,5 @@
 class PasswordRecordSerializer
   include JSONAPI::Serializer
 
-  attributes :name, :username, :password, :created_at, :updated_at
+  attributes :name, :username, :url, :notes, :password, :created_at, :updated_at
 end

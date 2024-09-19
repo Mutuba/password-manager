@@ -44,47 +44,6 @@ RSpec.describe(VaultsController, type: :request) do
     end
   end
 
-  describe "#show" do
-    let(:valid_password) { "FavouritePassword123!" }
-    let!(:vault) do
-      create(:vault, name: "Special Vault", user: user, unlock_code: valid_password)
-    end
-    context "when authenticated" do
-      context "when active session" do
-        before do
-          allow(REDIS).to(receive(:exists?).with(any_args).and_return(true))
-          get vault_path(vault.id), headers:
-        end
-        it "returns the vault" do
-          expect(response).to(have_http_status(:ok))
-          expect(json_response["data"]["attributes"]["name"]).to(eq("Special Vault"))
-        end
-      end
-
-      context "when session is expired" do
-        before do
-          allow(REDIS).to(receive(:exists?).with(any_args).and_return(false))
-          get vault_path(vault.id), headers:
-        end
-
-        it "returns expired session error" do
-          expect(response).to(have_http_status(:unauthorized))
-          expect(json_response["error"]).to(eq("Vault session expired"))
-        end
-      end
-    end
-
-    context "when not authenticated" do
-      before do
-        get vault_path(vault.id)
-        it "raises authentication error" do
-          expect(response).to(have_http_status(:unauthorized))
-          expect(json_response["error"]).to(eq("Missing authorization header"))
-        end
-      end
-    end
-  end
-
   describe "#update" do
     let(:valid_password) { "FavouritePassword123!" }
     let!(:vault) do
@@ -140,7 +99,7 @@ RSpec.describe(VaultsController, type: :request) do
 
   describe "#login" do
     let(:valid_password) { "FavouritePassword123!" }
-    let!(:vault) { create(:vault, user:, unlock_code: valid_password) }
+    let!(:vault) { create(:vault, :with_password_records, user:, unlock_code: valid_password) }
     let(:headers) { valid_headers(user.id) }
 
     context "when correct password" do
@@ -151,10 +110,10 @@ RSpec.describe(VaultsController, type: :request) do
           headers:
       end
 
-      it "logs in" do
+      it "logs in and returns password records" do
         expect(response).to(have_http_status(:success))
-        expect(json_response["message"]).to(eq("Login successful"))
         expect(REDIS).to(have_received(:setex))
+        expect(json_response["data"]).not_to(be_empty)
       end
     end
 

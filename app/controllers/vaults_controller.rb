@@ -8,13 +8,6 @@ class VaultsController < ApplicationController
     render(json: VaultSerializer.new(@vaults).serializable_hash)
   end
 
-  def show
-    raise AuthenticationError,
-      "Vault session expired" unless REDIS.exists?("vault:#{@vault.id}:user:#{current_user.id}")
-
-    render(json: VaultSerializer.new(@vault, include: [:password_records]).serializable_hash, status: :ok)
-  end
-
   def create
     vault = current_user.vaults.new(vault_params)
 
@@ -43,11 +36,17 @@ class VaultsController < ApplicationController
       session_key = "vault:#{@vault.id}:user:#{current_user.id}"
       hashed_value = Digest::SHA256.hexdigest("authenticated#{current_user.id}")
 
-      REDIS.setex(session_key, 10.minutes, hashed_value)
+      session_timeout = ENV.fetch("SESSION_TIMEOUT", 10).to_i.minutes
+      REDIS.setex(session_key, session_timeout, hashed_value)
+
       @vault.update(last_accessed_at: Time.current)
-      render(json: { message: "Login successful" }, status: :ok)
+
+      render(
+        json: PasswordRecordSerializer.new(@vault.password_records).serializable_hash,
+        status: :ok,
+      )
     else
-      render(json: { error: "Invalid password" }, status: :unauthorized)
+      render(json: { error: "Invalid credentials" }, status: :unauthorized)
     end
   end
 

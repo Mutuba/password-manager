@@ -22,5 +22,15 @@ FactoryBot.define do
     name { Faker::Name.name }
     username { Faker::Internet.username }
     password { Faker::Internet.password(min_length: 10, max_length: 16, mix_case: true, special_characters: true) }
+    notes { Faker::Lorem.paragraph }
+    url { Faker::Internet.url }
+
+    transient do
+      encryption_key { Faker::Internet.password(min_length: 10, mix_case: true, special_characters: true) }
+    end
+
+    after(:build) do |password_record, evaluator|
+      password_record.encryption_key(evaluator.encryption_key)
+    end
   end
 end
