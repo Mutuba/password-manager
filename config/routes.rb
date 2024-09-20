@@ -15,4 +15,5 @@ Rails.application.routes.draw do
 
   post "vaults/:id/login", to: "vaults#login", as: :vault_login
   post "vaults/:id/logout", to: "vaults#logout", as: :vault_logout
+  post "password_records/:id/decrypt_password", to: "password_records#decrypt_password", as: :decrypt_password
 end

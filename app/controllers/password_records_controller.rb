@@ -2,12 +2,12 @@
 
 class PasswordRecordsController < ApplicationController
   before_action :set_vault, only: [:create, :update]
-  before_action :set_password_record, only: [:update, :destroy]
-  before_action :validate_vault_password, only: [:create, :update]
+  before_action :set_password_record, only: [:update, :destroy, :decrypt_password]
+  before_action :validate_encryption_key, only: [:create, :update, :decrypt_password]
 
   def create
     @password_record = @vault.password_records.new(password_record_params)
-    @password_record.encryption_key(@vault_password)
+    @password_record.encryption_key(@encryption_key)
     if @password_record.save
       render_serialized_record(@password_record, :created)
     else
@@ -16,7 +16,7 @@ class PasswordRecordsController < ApplicationController
   end
 
   def update
-    @password_record.encryption_key(@vault_password)
+    @password_record.encryption_key(@encryption_key)
     if @password_record.update(password_record_params)
       render_serialized_record(@password_record, :ok)
     else
@@ -29,6 +29,15 @@ class PasswordRecordsController < ApplicationController
       head(:no_content)
     else
       render_errors(@password_record.errors.full_messages, :unprocessable_entity)
+    end
+  end
+
+  def decrypt_password
+    decrypted_password = @password_record.decrypt_password(@encryption_key)
+    if decrypted_password
+      render(json: { password: decrypted_password }, status: :ok)
+    else
+      render_errors(["Invalid decryption key or corrupted data"], :unprocessable_entity)
     end
   end
 
@@ -46,12 +55,10 @@ class PasswordRecordsController < ApplicationController
     params.require(:password_record).permit(:name, :username, :notes, :url, :password)
   end
 
-  def validate_vault_password
-    @vault_password = params[:vault_password]
-    if @vault_password.blank?
-      render_errors(["Vault password is required"], :unprocessable_entity)
-    elsif !@vault.authenticate_vault(@vault_password)
-      render_errors(["Invalid vault password"], :unauthorized)
+  def validate_encryption_key
+    @encryption_key = params[:encryption_key]
+    if @encryption_key.blank?
+      render_errors(["Password record encryption key is required"], :unprocessable_entity)
     end
   end
 
