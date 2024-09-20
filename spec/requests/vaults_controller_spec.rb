@@ -126,7 +126,7 @@ RSpec.describe(VaultsController, type: :request) do
 
       it "does not login in" do
         expect(response).to(have_http_status(:unauthorized))
-        expect(json_response["error"]).to(eq("Invalid password"))
+        expect(json_response["error"]).to(eq("Invalid credentials"))
       end
     end
   end

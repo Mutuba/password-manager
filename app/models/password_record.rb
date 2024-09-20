@@ -24,15 +24,18 @@ class PasswordRecord < ApplicationRecord
   validates :password, presence: true, length: { in: 10.. }, password: true
   validates :name, presence: true, uniqueness: { scope: :vault_id }
   validates :username, presence: true, uniqueness: { scope: :vault_id }
+  before_save :encrypt_password, if: :password_changed_or_its_new_record?
 
-  before_save :encrypt_password, if: :password_changed?
+  def password_changed_or_its_new_record?
+    password_changed? || new_record?
+  end
 
   def encryption_key(encryption_key)
     @encryption_key = encryption_key
   end
 
   def encrypt_password
-    raise ArgumentError, "Encryption key not set" unless @encryption_key
+    raise ArgumentError, "Encryption key has not been set" unless @encryption_key
 
     derived_password_key = derive_key_from_input(@encryption_key, vault.salt)
     self.password = EncryptionService.encrypt_data(data: password, encryption_key: derived_password_key)
