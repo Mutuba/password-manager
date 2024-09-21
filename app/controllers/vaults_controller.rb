@@ -42,7 +42,7 @@ class VaultsController < ApplicationController
       @vault.update(last_accessed_at: Time.current)
 
       render(
-        json: PasswordRecordSerializer.new(@vault.password_records).serializable_hash,
+        json: VaultSerializer.new(@vault, include: [:password_records]).serializable_hash,
         status: :ok,
       )
     else
