@@ -15,7 +15,7 @@ RSpec.describe(PasswordRecordsController, type: :request) do
         before do
           post vault_password_records_path(vault.id),
             params: {
-              vault_password: vault_password,
+              encryption_key: vault_password,
               password_record: {
                 name: "First record",
                 username: "Pearl Mutuba",
@@ -35,7 +35,7 @@ RSpec.describe(PasswordRecordsController, type: :request) do
         before do
           post vault_password_records_path(vault.id),
             params: {
-              vault_password: vault_password,
+              encryption_key: vault_password,
               password_record: { name: "First record", username: "Pearl Mutuba" },
             }.to_json,
             headers: headers
@@ -52,7 +52,7 @@ RSpec.describe(PasswordRecordsController, type: :request) do
       before do
         post vault_password_records_path(vault.id),
           params: {
-            vault_password: vault_password,
+            encryption_key: vault_password,
             password_record: {
               name: "First record",
               username: "Pearl Mutuba",
@@ -72,7 +72,7 @@ RSpec.describe(PasswordRecordsController, type: :request) do
       before do
         put vault_password_record_path(vault.id, password_record.id),
           params: {
-            vault_password: vault_password,
+            encryption_key: vault_password,
             password_record: { password: "QPFJWz13434398" },
           }.to_json,
           headers: headers
@@ -86,7 +86,7 @@ RSpec.describe(PasswordRecordsController, type: :request) do
     context "when required params are missing" do
       before do
         put vault_password_record_path(vault.id, password_record.id),
-          params: { vault_password: vault_password, password_record: { username: "" } }.to_json,
+          params: { encryption_key: vault_password, password_record: { username: "" } }.to_json,
           headers: headers
       end
 
@@ -100,7 +100,7 @@ RSpec.describe(PasswordRecordsController, type: :request) do
       before do
         put vault_password_record_path(vault.id, password_record.id),
           params: {
-            vault_password: vault_password,
+            encryption_key: vault_password,
             password_record: { username: "Awesome Username" },
           }.to_json
       end
