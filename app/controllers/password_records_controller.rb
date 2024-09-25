@@ -25,12 +25,11 @@ class PasswordRecordsController < ApplicationController
   end
 
   def destroy
-    if @password_record.destroy
-      head(:no_content)
-    else
-      render_errors(@password_record.errors.full_messages, :unprocessable_entity)
-    end
-  end
+    @password_record.destroy!
+    head :no_content
+  rescue ActiveRecord::RecordNotDestroyed => e
+    render_errors(e.record.errors.full_messages, :unprocessable_entity)
+  end  
 
   def decrypt_password
     decrypted_password = @password_record.decrypt_password(@encryption_key)
