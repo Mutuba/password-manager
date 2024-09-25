@@ -26,7 +26,7 @@ FactoryBot.define do
     url { Faker::Internet.url }
 
     transient do
-      encryption_key { Faker::Internet.password(min_length: 10, mix_case: true, special_characters: true) }
+      encryption_key { "FavouritePassword123!*" }
     end
 
     after(:build) do |password_record, evaluator|

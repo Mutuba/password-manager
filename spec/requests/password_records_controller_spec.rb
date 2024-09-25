@@ -111,6 +111,66 @@ RSpec.describe(PasswordRecordsController, type: :request) do
     end
   end
 
+  describe "#decrypt_password" do
+    context "when user is authenticated" do
+      before do
+        post decrypt_password_path(password_record.id),
+          headers: headers,
+          params: {
+            encryption_key: vault_password,
+          }.to_json
+      end
+
+      it "decrypts the password record" do
+        expect(response).to(have_http_status(:ok))
+        expect(json_response["password"]).not_to(be_nil)
+      end
+    end
+
+    context "when the encryption key is invalid" do
+      before do
+        post decrypt_password_path(password_record.id),
+          headers: headers,
+          params: {
+            encryption_key: "invalid_key",
+          }.to_json
+      end
+
+      it "raises an error for invalid decryption key" do
+        expect(response).to(have_http_status(:unprocessable_entity))
+        expect(json_response["errors"]).to(include("Invalid decryption key or corrupted data"))
+      end
+    end
+
+    context "when the password record does not exist" do
+      before do
+        post decrypt_password_path(-1),
+          headers: headers,
+          params: {
+            encryption_key: vault_password,
+          }.to_json
+      end
+
+      it "returns a not found error" do
+        expect(response).to(have_http_status(:not_found))
+        expect(json_response["error"]).to(include("Couldn't find PasswordRecord with 'id'=-1"))
+      end
+    end
+
+    context "when user is not authenticated" do
+      before do
+        post decrypt_password_path(password_record.id),
+          params: {
+            encryption_key: vault_password,
+          }.to_json
+      end
+
+      it "raises authentication error" do
+        expect(response).to(have_http_status(:unauthorized))
+      end
+    end
+  end
+
   describe "#destroy" do
     context "when user is authenticated" do
       before do
