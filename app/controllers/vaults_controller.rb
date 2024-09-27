@@ -50,16 +50,16 @@ class VaultsController < ApplicationController
     end
   end
 
-  # def logout
-  #   session_key = "vault:#{@vault.id}:user:#{current_user.id}"
+  def logout
+    session_key = "vault:#{@vault.id}:user:#{current_user.id}"
 
-  #   if REDIS.exists?(session_key)
-  #     REDIS.del(session_key)
-  #     render(json: { message: "Logout successful" }, status: :ok)
-  #   else
-  #     render(json: { error: "No active session found" }, status: :unprocessable_entity)
-  #   end
-  # end
+    if REDIS.exists?(session_key)
+      REDIS.del(session_key)
+      render(json: { message: "Logout successful" }, status: :ok)
+    else
+      render(json: { error: "No active session found" }, status: :unprocessable_entity)
+    end
+  end
 
   private
 
