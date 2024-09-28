@@ -33,7 +33,7 @@ class Vault < ApplicationRecord
   enum vault_type: { personal: 0, business: 1, shared: 2, temporary: 3 }
 
   belongs_to :user
-  has_many :password_records
+  has_many :password_records, dependent: :destroy
 
   validates :name, presence: true, uniqueness: { scope: :user_id }
   validates :unlock_code, :salt, presence: true
