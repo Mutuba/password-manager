@@ -21,12 +21,12 @@ This backend API provides services for managing password vaults and password rec
   - POST /vaults
   - Params:
 
-```ruby
-{
-  "vault": {
-    "name": "Personal Vault",
-    "unlock_code": "YourSecurePassword",
-    "description": "Description of your vault"
-  }
-}
-```
+    ```ruby
+        {
+        "vault": {
+            "name": "Personal Vault",
+            "unlock_code": "YourSecurePassword",
+            "description": "Description of your vault"
+        }
+        }
+    ```
