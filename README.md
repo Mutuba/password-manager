@@ -19,14 +19,28 @@ This backend API provides services for managing password vaults and password rec
 - Create Vault: Creates a new vault.
 
   - POST /vaults
+
   - Params:
 
     ```ruby
-    {
-        "vault": {
-            "name": "Personal Vault",
-            "unlock_code": "YourSecurePassword",
-            "description": "Description of your vault"
+        {
+            "vault": {
+                "name": "Personal Vault",
+                "unlock_code": "YourSecurePassword",
+                "description": "Description of your vault"
+            }
         }
-    }
     ```
+
+  - Response
+
+        ```ruby
+            {
+            "data": {
+                "id": 1,
+                "name": "Personal Vault",
+                "last_accessed_at": null,
+                "password_records": []
+            }
+        }
+        ```
