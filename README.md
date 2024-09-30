@@ -1,24 +1,13 @@
-# README
+## Backend Rails API Documentation
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Overview
 
-Things you may want to cover:
+This backend API provides services for managing password vaults and password records securely. It uses AES-256-GCM encryption to securely store vault unlock codes and passwords. This API is designed to work with a frontend client, which interacts with the API endpoints for functionalities such as vault creation, password management, and secure authentication.
 
-* Ruby version
+## Technologies Used
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- Ruby on Rails: Backend framework.
+- AES-256-GCM Encryption: For securing vaults and password records.
+- Redis: Session management and caching.
+- PostgreSQL: Database for storing user, vault, and password records.
+- JWT: JSON Web Tokens for secure authentication.
