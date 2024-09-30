@@ -34,13 +34,14 @@ This backend API provides services for managing password vaults and password rec
 
   - Response
 
-        ```ruby
-            {
-            "data": {
-                "id": 1,
-                "name": "Personal Vault",
-                "last_accessed_at": null,
-                "password_records": []
-            }
+    ````ruby
+        {
+        "data": {
+            "id": 1,
+            "name": "Personal Vault",
+            "last_accessed_at": null,
+            "password_records": []
         }
+    }
         ```
+    ````
