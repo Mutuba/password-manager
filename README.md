@@ -23,10 +23,10 @@ This backend API provides services for managing password vaults and password rec
 
     ```ruby
     {
-    "vault": {
-        "name": "Personal Vault",
-        "unlock_code": "YourSecurePassword",
-        "description": "Description of your vault"
-    }
+        "vault": {
+            "name": "Personal Vault",
+            "unlock_code": "YourSecurePassword",
+            "description": "Description of your vault"
+        }
     }
     ```
