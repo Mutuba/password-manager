@@ -44,3 +44,21 @@ This backend API provides services for managing password vaults and password rec
     }
   }
   ```
+
+2. List Vaults: Lists all vaults for the current user.
+
+   - GET /vaults
+   - Response:
+
+   ```ruby
+    {
+        "data": [
+            {
+            "id": 1,
+            "name": "Personal Vault",
+            "last_accessed_at": null,
+            "password_records": []
+            }
+        ]
+    }
+   ```
