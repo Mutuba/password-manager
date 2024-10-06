@@ -23,26 +23,26 @@ This backend API provides services for managing password vaults and password rec
   - Params:
 
   ```ruby
-  {
-    "vault": {
-        "name": "Personal Vault",
-        "unlock_code": "YourSecurePassword",
-        "description": "Description of your vault"
+    {
+        "vault": {
+            "name": "Personal Vault",
+            "unlock_code": "YourSecurePassword",
+            "description": "Description of your vault"
+        }
     }
-  }
   ```
 
   - Response
 
   ```ruby
-  {
-    "data": {
-        "id": 1,
-        "name": "Personal Vault",
-        "last_accessed_at": null,
-        "password_records": []
+    {
+        "data": {
+            "id": 1,
+            "name": "Personal Vault",
+            "last_accessed_at": null,
+            "password_records": []
+        }
     }
-  }
   ```
 
 2. List Vaults: Lists all vaults for the current user.
