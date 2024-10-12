@@ -70,10 +70,9 @@ This backend API provides services for managing password vaults and password rec
    - Params:
 
    ```ruby
-   {
-       "unlock_code": "YourSecurePassword"
-   }
-
+        {
+            "unlock_code": "YourSecurePassword"
+        }
    ```
 
    - Response
@@ -103,13 +102,13 @@ This backend API provides services for managing password vaults and password rec
 
 ```ruby
     {
-    "password_record": {
-        "name": "Gmail Account",
-        "username": "user@example.com",
-        "password": "YourPassword123",
-        "notes": "Personal Gmail account"
-    },
-    "encryption_key": "Base64EncodedKey"
+        "password_record": {
+            "name": "Gmail Account",
+            "username": "user@example.com",
+            "password": "YourPassword123",
+            "notes": "Personal Gmail account"
+        },
+        "encryption_key": "Base64EncodedKey"
     }
 ```
 
@@ -117,12 +116,78 @@ This backend API provides services for managing password vaults and password rec
 
 ```ruby
     {
-    "data": {
-        "id": 1,
-        "name": "Gmail Account",
-        "username": "user@example.com",
-        "notes": "Personal Gmail account"
-    }
+        "data": {
+            "id": 1,
+            "name": "Gmail Account",
+            "username": "user@example.com",
+            "notes": "Personal Gmail account"
+        }
     }
 
 ```
+
+5. Update Password Record: Updates an existing password record.
+
+- PUT /vaults/password_records
+
+- Params:
+
+```ruby
+    {
+        "password_record": {
+            "password": "NewPassword123",
+            "notes": "Updated account"
+        },
+        "encryption_key": "Base64EncodedKey"
+    }
+
+```
+
+- Response
+
+```ruby
+    {
+        "data": {
+            "id": 1,
+            "name": "Gmail Account",
+            "username": "user@example.com",
+            "notes": "Updated account"
+        }
+    }
+
+```
+
+6. Decrypt Password: Decrypts a password for a specific record.
+
+- POST /vaults/password_records/decrypt_password
+
+- Params:
+
+```ruby
+    {
+        "encryption_key": "Base64EncodedKey"
+    }
+
+```
+
+- Response
+
+```ruby
+    {
+        "password": "YourDecryptedPassword"
+    }
+```
+
+### Getting Started
+
+- Clone the repository.
+- Install dependencies: bundle install.
+- Set up the database: rails db:setup.
+- Start the server: rails server.
+
+### Security
+
+- All encryption is done using AES-256-GCM for both vaults and password records.
+- Data is stored securely in the database after encryption.
+- Redis is used for session management and timeout control for vault sessions.
+- For additional information on API usage, refer to the controllers and models within the application codebase.
