@@ -93,3 +93,36 @@ This backend API provides services for managing password vaults and password rec
            }
        }
    ```
+
+4. Password Records Management
+
+- Create Password Record: Creates a new password record for a vault.
+
+- POST /vaults/password_records
+- Params:
+
+```ruby
+    {
+    "password_record": {
+        "name": "Gmail Account",
+        "username": "user@example.com",
+        "password": "YourPassword123",
+        "notes": "Personal Gmail account"
+    },
+    "encryption_key": "Base64EncodedKey"
+    }
+```
+
+- Response:
+
+```ruby
+    {
+    "data": {
+        "id": 1,
+        "name": "Gmail Account",
+        "username": "user@example.com",
+        "notes": "Personal Gmail account"
+    }
+    }
+
+```
