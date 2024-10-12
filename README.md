@@ -62,3 +62,34 @@ This backend API provides services for managing password vaults and password rec
         ]
     }
    ```
+
+3. Login to Vault: Authenticates a user to a specific vault.
+
+   - POST /vaults/login
+
+   - Params:
+
+   ```ruby
+   {
+       "unlock_code": "YourSecurePassword"
+   }
+
+   ```
+
+   - Response
+
+   ```ruby
+           {
+       "data": {
+           "id": 1,
+           "name": "Personal Vault",
+           "password_records": [
+               {
+                   "id": 1,
+                   "name": "Gmail Account",
+                   "username": "user@example.com"
+               }
+           ]
+           }
+       }
+   ```
