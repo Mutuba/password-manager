@@ -25,7 +25,8 @@ class PasswordRecord < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :vault_id }
   validates :username, presence: true, uniqueness: { scope: :vault_id }
   before_save :encrypt_password, if: :password_changed_or_its_new_record?
-
+  
+  # this method will be removed soon
   def password_changed_or_its_new_record?
     password_changed? || new_record?
   end

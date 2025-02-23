@@ -17,25 +17,30 @@ require "rails_helper"
 
 RSpec.describe(User, type: :model) do
   describe "associations" do
+    subject(:user) { build(:user) }
+
     it { should have_many(:vaults) }
   end
 
   describe "column validations" do
-    it { should have_db_column(:username).of_type(:string) }
-    it { should have_db_column(:password_digest).of_type(:string) }
+    subject(:user) { build(:user) }
+
+    it 'should validate columns' do
+      expect(user).to have_db_column(:username).of_type(:string)
+      expect(user).to have_db_column(:password_digest).of_type(:string)
+    end
   end
 
   describe "validations" do
-    subject { build(:user) }
-    it { should validate_presence_of(:password) }
-    it { should validate_presence_of(:username) }
-    it { should validate_presence_of(:email) }
-    it { should validate_uniqueness_of(:email) }
-    it { should validate_uniqueness_of(:username) }
-    it do
-      should validate_length_of(:password)
-        .is_at_least(6)
-        .on(:create)
+    subject(:user) { build(:user) }
+
+    it "validates presence and uniqueness of attributes" do
+      expect(user).to validate_presence_of(:password)
+      expect(user).to validate_presence_of(:username)
+      expect(user).to validate_presence_of(:email)
+      expect(user).to validate_uniqueness_of(:email)
+      expect(user).to validate_uniqueness_of(:username)
+      expect(user).to validate_length_of(:password).is_at_least(6).on(:create)
     end
   end
 end

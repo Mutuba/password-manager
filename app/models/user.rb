@@ -18,6 +18,7 @@ class User < ApplicationRecord
   has_many :vaults
 
   validates :email, presence: true, uniqueness: true
+
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   validates :username, presence: true, uniqueness: true
@@ -25,4 +26,18 @@ class User < ApplicationRecord
   validates :password,
     length: { minimum: 6 },
     if: -> { new_record? || !password.nil? }
+
+  def mutuba
+    if current_user.email?
+      send_email_confirmation
+    else
+      send_message_notification
+    end
+  end
+
+  def send_email_confirmation
+  end
+
+  def send_message_notification
+  end
 end
